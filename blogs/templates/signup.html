@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Signup - MyBlog</title>
+        <link rel="stylesheet" href="{% static 'style.css' %}">
+    </head>
+        <body>
+    <!-- Header Section -->
+    <header>
+        <h2>MyBlog</h2>
+
+        <nav>
+            <a href="{% url 'blogs' %}">Home</a>
+            <a href="{% url 'blogs' %}#about">About</a>
+            <a href="{% url 'blogs' %}#blog">Blog</a>
+        </nav>
+    </header>
+    <!-- Login Section -->
+     <main>
+        <h1>Create Your Account</h1>
+        <p>Join MyBlog and start sharing your stories!</p>
+        <form action="{% url 'signup' %}" method="post">
+           {% csrf_token %} 
+        <!--Signup Field--> 
+        <div>
+            <label for="fullname">Full Name</label>
+            <input
+                        type="text"
+                        id="fullname"
+                        name="fullname"
+                        placeholder="Enter your full name"
+                        required
+                    >
+        </div>
+        <br>
+
+        <div>
+             <label for="email">Email Address</label>
+             <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+        </div>
+        <br>
+
+        <div>
+             <label for="password">Password</label>
+             <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Create a password"
+                        required
+                        minlength="8"
+                    >
+
+        </div>
+        <br>
+
+        <div>
+            <label for="confirm-password">Password</label>
+             <input
+                        type="password"
+                        id="confirm-password"
+                        name="confirm-password"
+                        placeholder="Re-enter your password"
+                        required
+                        minlength="8"
+                    >
+        </div>
+        <br>
+
+        <div>
+             <input
+                        type="checkbox"
+                        id="terms"
+                        name="terms"
+                        value="yes"
+                        required
+                    >
+
+              <label for="terms">
+                        I agree to the Terms and Conditions
+              </label>
+        </div>
+        <br>
+
+        <!-- Create Account Button -->
+        <button type="submit">Create Account</button>
+
+        </form>
+
+        <!-- Login Link -->
+        <p>
+            Already have an account?
+            <a href="{% url 'login' %}">Login</a>
+        </p>
+
+        <!-- Back to Home -->
+        <p>
+            <a href="{% url 'blogs' %}"> Back to Home</a>
+        </p>
+
+     </main>
+   </body>
+</html>

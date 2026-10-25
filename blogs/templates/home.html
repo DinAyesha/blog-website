@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Blog</title>
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo">MyBlog</div>
+
+        <nav class="nav-links">
+            <ul>
+                <li>
+                    <a href="{% url 'blogs' %}" class="active">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'blogs' %}" class="active">About</a>
+                </li>
+                <li>
+                    <a href="{% url 'blogs' %}" class="active">Blog</a>
+                </li>
+                <li>
+                    <a href="{% url 'blogs' %}" class="active">Contact</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="buttons">
+            <a href="{% url 'login' %}" class="btn login">Login</a>
+            <a href="{% url 'signup' %}" class="btn signup">Sign Up</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>
+                Thoughts, Stories,<br>
+                Ideas & More
+            </h1>
+
+            <p>
+                A simple blog where I share my thoughts,
+                learning journey and everyday experiences.
+            </p>
+
+            <a href="{% url 'blogs' %}" class="btn blog">
+                Explore Blog
+            </a>
+        </div>
+
+        <div class="hero-image">
+            <img
+                src="{% static 'images/daily life.png' %}"
+                alt="Daily life and blogging">
+        </div>
+    </section>
+
+    <!-- Latest Posts Section -->
+    <section class="container" id="blog">
+
+        <div class="section-header">
+            <h2>Latest Posts</h2>
+            <a href="{% url 'blogs' %}" class="view-all">View All</a>
+        </div>
+
+        <div class="posts">
+
+            <!-- First Blog Post -->
+            <article class="post-card">
+                <img
+                    src="{% static 'images/productive.jpg' %}"
+                    alt="Daily productivity">
+
+                <h3>How I Stay Productive</h3>
+
+                <p>
+                    Sharing my simple daily routine,
+                    how I spend my day and keep myself energetic.
+                </p>
+
+                <div class="meta">
+                    <span>Oct 3, 2025</span>
+                    <span>3 Comments</span>
+                </div>
+            </article>
+
+            <!-- Second Blog Post -->
+            <article class="post-card">
+                <img
+                    src="{% static 'images/dish.jpg' %}"
+                    alt="Homemade recipe">
+
+                <h3>Trying New Recipe</h3>
+
+                <p>
+                    This weekend, I tried cooking a new recipe
+                    that I discovered on Instagram.
+                </p>
+
+                <div class="meta">
+                    <span>Jan 14, 2026</span>
+                    <span>17 Comments</span>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+</body>
+</html>

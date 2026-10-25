@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - MyBlog</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+
+<!-- Header Section -->
+    <header>
+        <h2>MyBlog</h2>
+
+        <nav>
+            <a href="{% url 'blogs' %}">Home</a>
+            <a href="{% url 'blogs' %}#about">About</a>
+            <a href="{% url 'blogs' %}#blog">Blog</a>
+        </nav>
+    </header>
+
+    <!-- Login Section -->
+    <main>
+        <h1>Welcome Back!</h1>
+        <p>Login to continue reading and sharing stories.</p>
+
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+
+            <!-- Email Field -->
+            <div>
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                    >
+            </div>
+
+            <br>
+
+            <!-- Password Field -->
+            <div>
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                    >
+            </div>
+
+            <br>
+
+            <!-- Remember Me -->
+            <div>
+                <input
+                    type="checkbox"
+                    id="remember"
+                    name="remember"
+                    value="yes"
+                    >
+
+                <label for="remember">Remember Me</label>
+
+                <a href="#">Forgot Password?</a>
+            </div>
+
+            <br>
+
+            <!-- Login Button -->
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- Sign Up Link -->
+        <p>
+            Don't have an account?
+            <a href="{% url 'signup' %}">Sign Up</a>
+        </p>
+
+        <p>
+            <a href="{% url 'blogs' %}">Back to Home</a>
+        </p>
+    </main>
+
+</body>
+</html>
