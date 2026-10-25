@@ -22,7 +22,7 @@
                     <a href="{% url 'blogs' %}" class="active">About</a>
                 </li>
                 <li>
-                    <a href="{% url 'blogs' %}" class="active">Blog</a>
+                    <a href="{% url 'blog' %}" class="active">Blog</a>
                 </li>
                 <li>
                     <a href="{% url 'blogs' %}" class="active">Contact</a>
@@ -37,6 +37,7 @@
     </header>
 
     <!-- Hero Section -->
+     <main>
     <section class="hero">
         <div class="hero-content">
             <h1>
@@ -49,7 +50,7 @@
                 learning journey and everyday experiences.
             </p>
 
-            <a href="{% url 'blogs' %}" class="btn blog">
+            <a href="{% url 'blog' %}" class="btn blog">
                 Explore Blog
             </a>
         </div>
@@ -111,6 +112,10 @@
 
         </div>
     </section>
-
+    </main>
+<!--Footer -->
+     <footer>
+        <p>© 2026 MyBlog. All rights reserved.</p>
+    </footer>
 </body>
 </html>

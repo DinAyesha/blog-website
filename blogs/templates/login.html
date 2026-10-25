@@ -8,7 +8,7 @@
 
 <body>
 
-<!-- Header Section -->
+    <!-- Header Section -->
     <header>
         <h2>MyBlog</h2>
 
@@ -20,73 +20,86 @@
     </header>
 
     <!-- Login Section -->
-    <main>
-        <h1>Welcome Back!</h1>
-        <p>Login to continue reading and sharing stories.</p>
+    <main class="login-container">
 
-        <form action="{% url 'login' %}" method="post">
-            {% csrf_token %}
+        <div class="login-box">
 
-            <!-- Email Field -->
-            <div>
-                <label for="email">Email Address</label>
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    autocomplete="email"
-                    required
+            <h1>Welcome Back!</h1>
+
+            <p class="login-description">
+                Login to continue reading and sharing stories.
+            </p>
+
+            <form action="{% url 'login' %}" method="post">
+                {% csrf_token %}
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
                     >
-            </div>
+                </div>
 
-            <br>
-
-            <!-- Password Field -->
-            <div>
-                <label for="password">Password</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    autocomplete="current-password"
-                    required
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
                     >
-            </div>
+                </div>
 
-            <br>
+                <!-- Remember Me and Forgot Password -->
+                <div class="login-options">
 
-            <!-- Remember Me -->
-            <div>
-                <input
-                    type="checkbox"
-                    id="remember"
-                    name="remember"
-                    value="yes"
-                    >
+                    <label for="remember">
+                        <input
+                            type="checkbox"
+                            id="remember"
+                            name="remember"
+                            value="yes"
+                        >
+                        Remember Me
+                    </label>
 
-                <label for="remember">Remember Me</label>
+                    <a href="#">Forgot Password?</a>
 
-                <a href="#">Forgot Password?</a>
-            </div>
+                </div>
 
-            <br>
+                <!-- Login Button -->
+                <button type="submit" class="login-submit">
+                    Login
+                </button>
 
-            <!-- Login Button -->
-            <button type="submit">Login</button>
-        </form>
+            </form>
 
-        <!-- Sign Up Link -->
-        <p>
-            Don't have an account?
-            <a href="{% url 'signup' %}">Sign Up</a>
-        </p>
+            <!-- Sign Up Link -->
+            <p class="signup-text">
+                Don't have an account?
+                <a href="{% url 'signup' %}">Sign Up</a>
+            </p>
 
-        <p>
-            <a href="{% url 'blogs' %}">Back to Home</a>
-        </p>
+            <!-- Back to Home -->
+            <p class="back-home">
+                <a href="{% url 'blogs' %}">Back to Home</a>
+            </p>
+
+        </div>
+
     </main>
-
+<!-- Footer -->
+    <footer>
+        <p>© 2026 MyBlog. All rights reserved.</p>
+    </footer>
 </body>
 </html>

@@ -1,0 +1,160 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog - MyBlog</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo">MyBlog</div>
+
+        <nav class="nav-links">
+            <ul>
+                <li><a href="{% url 'blogs' %}">Home</a></li>
+                <li><a href="{% url 'blogs' %}#about">About</a></li>
+                <li><a href="{% url 'blog' %}" class="active">Blog</a></li>
+                <li><a href="{% url 'blogs' %}#contact">Contact</a></li>
+            </ul>
+        </nav>
+
+        <div class="buttons">
+            <a href="{% url 'login' %}" class="btn login">Login</a>
+            <a href="{% url 'signup' %}" class="btn signup">Sign Up</a>
+        </div>
+    </header>
+
+    <!-- Blog Introduction -->
+    <section class="blog-intro">
+        <h1>Explore Blogs</h1>
+        <p>Read stories, share your ideas and discover something new.</p>
+    </section>
+
+    <!-- Blog Content -->
+    <main class="blog-container">
+
+        <!-- Search and New Blog -->
+        <div class="blog-top">
+            <form class="blog-search">
+                <input type="text" placeholder="Search blogs...">
+                <button type="button">Search</button>
+            </form>
+
+            <a href="#" class="new-blog-btn">+ New Blog</a>
+        </div>
+
+        <!-- Blog Categories -->
+        <section class="blog-category-section">
+            <h2>Categories</h2>
+
+            <div class="category-list">
+                <a href="#all-posts" class="category-link active">All Posts</a>
+                <a href="#daily-life" class="category-link">Daily Life</a>
+                <a href="#technology" class="category-link">Technology</a>
+                <a href="#food" class="category-link">Food &amp; Recipes</a>
+                <a href="#travel" class="category-link">Travel</a>
+                <a href="#education" class="category-link">Education</a>
+            </div>
+        </section>
+
+        <!-- All Blog Posts -->
+        <section class="latest-blogs" id="all-posts">
+            <h2>Latest Posts</h2>
+            <p class="blog-subtitle">
+                Stories and ideas shared by our community.
+            </p>
+
+            <div class="blog-posts">
+
+                <!-- Blog 1 -->
+                <article class="blog-card" id="daily life">
+                    <img src="{% static 'images/alone .jpeg' %}"
+                         alt="Daily life blog"
+                         class="blog-image">
+
+                    <span class="blog-tag">Daily Life</span>
+                    <h3>A Beautiful Day in My Life</h3>
+                    <p class="blog-description">
+                        Every day gives us a new opportunity to learn,
+                        grow and create beautiful memories.
+                    </p>
+                    <a href="#" class="read-more">Read More &rarr;</a>
+                </article>
+
+                <!-- Blog 2 -->
+                <article class="blog-card" id="technology">
+                    <img src="{% static 'images/tech.jpeg' %}"
+                         alt="Technology blog"
+                         class="blog-image">
+
+                    <span class="blog-tag">Technology</span>
+                    <h3>How Technology Changes Our Lives</h3>
+                    <p class="blog-description">
+                        Technology makes communication easier and
+                        helps us learn and work in new ways.
+                    </p>
+                    <a href="#" class="read-more">Read More &rarr;</a>
+                </article>
+
+                <!-- Blog 3 -->
+                <article class="blog-card" id="food">
+                    <img src="{% static 'images/breakfast.jpeg' %}"
+                         alt="Food and recipes blog"
+                         class="blog-image">
+
+                    <span class="blog-tag">Food &amp; Recipes</span>
+                    <h3>Easy Recipes to Try at Home</h3>
+                    <p class="blog-description">
+                        Discover simple and delicious recipes that
+                        you can prepare in your own kitchen.
+                    </p>
+                    <a href="#" class="read-more">Read More &rarr;</a>
+                </article>
+
+                <!-- Blog 4 -->
+                <article class="blog-card" id="travel">
+                    <img src="{% static 'images/travel.jpeg' %}"
+                         alt="Travel blog"
+                         class="blog-image">
+
+                    <span class="blog-tag">Travel</span>
+                    <h3>Exploring Beautiful Places</h3>
+                    <p class="blog-description">
+                        Travel lets us discover new places, experience
+                        different cultures and make memories.
+                    </p>
+                    <a href="#" class="read-more">Read More &rarr;</a>
+                </article>
+
+                <!-- Blog 5 -->
+                <article class="blog-card" id="education">
+                    <img src="{% static 'images/education.jpeg' %}"
+                         alt="Education blog"
+                         class="blog-image">
+
+                    <span class="blog-tag">Education</span>
+                    <h3>Tips for Better Learning</h3>
+                    <p class="blog-description">
+                        Good study habits and regular practice can
+                        make learning easier and more enjoyable.
+                    </p>
+                    <a href="#" class="read-more">Read More &rarr;</a>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 MyBlog. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

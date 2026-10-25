@@ -1,11 +1,13 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Signup - MyBlog</title>
-        <link rel="stylesheet" href="{% static 'style.css' %}">
-    </head>
-        <body>
+<head>
+    <title>Signup - MyBlog</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+
     <!-- Header Section -->
     <header>
         <h2>MyBlog</h2>
@@ -16,66 +18,78 @@
             <a href="{% url 'blogs' %}#blog">Blog</a>
         </nav>
     </header>
-    <!-- Login Section -->
-     <main>
-        <h1>Create Your Account</h1>
-        <p>Join MyBlog and start sharing your stories!</p>
-        <form action="{% url 'signup' %}" method="post">
-           {% csrf_token %} 
-        <!--Signup Field--> 
-        <div>
-            <label for="fullname">Full Name</label>
-            <input
+
+    <!-- Signup Section -->
+    <main class="signup-container">
+
+        <div class="signup-box">
+
+            <h1>Create Your Account</h1>
+
+            <p class="signup-description">
+                Join MyBlog and start sharing your stories!
+            </p>
+
+            <form action="{% url 'signup' %}" method="post">
+                {% csrf_token %}
+
+                <!-- Full Name Field -->
+                <div class="form-group">
+                    <label for="fullname">Full Name</label>
+                    <input
                         type="text"
                         id="fullname"
                         name="fullname"
                         placeholder="Enter your full name"
+                        autocomplete="name"
                         required
                     >
-        </div>
-        <br>
+                </div>
 
-        <div>
-             <label for="email">Email Address</label>
-             <input
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input
                         type="email"
                         id="email"
                         name="email"
                         placeholder="Enter your email"
+                        autocomplete="email"
                         required
                     >
-        </div>
-        <br>
+                </div>
 
-        <div>
-             <label for="password">Password</label>
-             <input
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
                         type="password"
                         id="password"
                         name="password"
                         placeholder="Create a password"
-                        required
+                        autocomplete="new-password"
                         minlength="8"
+                        required
                     >
+                </div>
 
-        </div>
-        <br>
-
-        <div>
-            <label for="confirm-password">Password</label>
-             <input
+                <!-- Confirm Password Field -->
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input
                         type="password"
                         id="confirm-password"
                         name="confirm-password"
                         placeholder="Re-enter your password"
-                        required
+                        autocomplete="new-password"
                         minlength="8"
+                        required
                     >
-        </div>
-        <br>
+                </div>
 
-        <div>
-             <input
+                <!-- Terms and Conditions -->
+                <div class="terms">
+                    <input
                         type="checkbox"
                         id="terms"
                         name="terms"
@@ -83,28 +97,35 @@
                         required
                     >
 
-              <label for="terms">
+                    <label for="terms">
                         I agree to the Terms and Conditions
-              </label>
+                    </label>
+                </div>
+
+                <!-- Create Account Button -->
+                <button type="submit" class="signup-submit">
+                    Create Account
+                </button>
+
+            </form>
+
+            <!-- Login Link -->
+            <p class="login-text">
+                Already have an account?
+                <a href="{% url 'login' %}">Login</a>
+            </p>
+
+            <!-- Back to Home -->
+            <p class="signup-home">
+                <a href="{% url 'blogs' %}">Back to Home</a>
+            </p>
+
         </div>
-        <br>
 
-        <!-- Create Account Button -->
-        <button type="submit">Create Account</button>
-
-        </form>
-
-        <!-- Login Link -->
-        <p>
-            Already have an account?
-            <a href="{% url 'login' %}">Login</a>
-        </p>
-
-        <!-- Back to Home -->
-        <p>
-            <a href="{% url 'blogs' %}"> Back to Home</a>
-        </p>
-
-     </main>
-   </body>
+    </main>
+<!-- Footer -->
+    <footer>
+        <p>© 2026 MyBlog. All rights reserved.</p>
+    </footer>
+</body>
 </html>
