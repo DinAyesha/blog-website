@@ -29,8 +29,14 @@
             <p class="signup-description">
                 Join MyBlog and start sharing your stories!
             </p>
-
-            <form action="{% url 'signup' %}" method="post">
+    {% if messages %}
+        {% for message in messages %}
+           <p class="signup-message {{ message.tags }}">
+               {{ message }}
+           </p>
+        {% endfor %}
+    {% endif %}
+            <form action="{% url 'signup' %}" method="post" >
                 {% csrf_token %}
 
                 <!-- Full Name Field -->

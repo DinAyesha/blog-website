@@ -30,6 +30,13 @@
             <p class="login-description">
                 Login to continue reading and sharing stories.
             </p>
+    {% if messages %}
+        {% for message in messages %}
+            <p class="signup-message {{ message.tags }}">
+                {{ message }}
+            </p>
+        {% endfor %}
+    {% endif %}
 
             <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
