@@ -6,13 +6,32 @@ from django.core.validators import validate_email
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+from django.contrib.auth import authenticate, login as auth_login
 
 # Create your views here.
 def blogs(request):
     template = loader.get_template('home.html')
     return HttpResponse(template.render())
 def login(request):
+    if request.method == "POST":
+       email = request.POST.get("email", "").strip().lower()
+       password = request.POST.get("password", "")
+
+       user = authenticate(
+          request,
+          username=email,
+          password=password
+       )
+
+       if not user:
+          messages.error(request, "Invalid email or password")
+          return render(request,"login.html")
+       
+       auth_login(request,user)
+       return redirect("blogs")
+    
     return render(request,"login.html")
+
 def signup(request):
 
     if request.method == "POST":
