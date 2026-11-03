@@ -28,6 +28,7 @@ def login(request):
           return render(request,"login.html")
        
        auth_login(request,user)
+       messages.success(request,"Login successful!")
        return redirect("blogs")
     
     return render(request,"login.html")
