@@ -7,11 +7,11 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import logout
 
 # Create your views here.
 def blogs(request):
-    template = loader.get_template('home.html')
-    return HttpResponse(template.render())
+    return render(request,"home.html")
 def login(request):
     if request.method == "POST":
        email = request.POST.get("email", "").strip().lower()
@@ -32,6 +32,10 @@ def login(request):
        return redirect("blogs")
     
     return render(request,"login.html")
+def logout_view(request):
+   logout(request)
+
+   return redirect("blogs")
 
 def signup(request):
 

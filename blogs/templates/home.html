@@ -10,7 +10,15 @@
 <body>
 
     <!-- Navigation Bar -->
-    <header>
+     {% if messages %}
+    {% for message in messages %}
+        <p class="signup-message {{ message.tags }}">
+            {{ message }}
+        </p>
+    {% endfor %}
+{% endif %}
+    <header> 
+
         <div class="logo">MyBlog</div>
 
         <nav class="nav-links">
@@ -31,8 +39,30 @@
         </nav>
 
         <div class="buttons">
+            {% if user.is_authenticated %}
+            <div class="profile-section">
+
+                <div class="profile-icon">
+                    <img src="{% static 'images/profile.png' %}" alt="Profile">
+                </div>
+
+                <span class="profile-name">
+                    {{user.get_full_name|default:user.username}}
+                </span>
+
+                <form method="POST" action="{% url 'logout' %}">
+                   {% csrf_token %}
+                   <button type="submit" class="btn logout">
+                    Logout
+                   </button>
+               </form>
+
+            </div>
+
+            {% else %}
             <a href="{% url 'login' %}" class="btn login">Login</a>
             <a href="{% url 'signup' %}" class="btn signup">Sign Up</a>
+            {% endif %}
         </div>
     </header>
 
