@@ -48,7 +48,7 @@
         {% endfor %}
     {% endif %}
 
-            <form action="{% url 'login' %}" method="post">
+            <form action="{% url 'login' %}" method="post" novalidate>
                 {% csrf_token %}
 
                 <!-- Email Field -->

@@ -47,7 +47,7 @@
            </p>
         {% endfor %}
     {% endif %}
-            <form action="{% url 'signup' %}" method="post" >
+            <form action="{% url 'signup' %}" method="post" novalidate>
                 {% csrf_token %}
 
                 <!-- Full Name Field -->

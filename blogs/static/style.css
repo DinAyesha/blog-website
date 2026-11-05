@@ -91,7 +91,7 @@ header .profile-section form {
 }
 
 .btn.logout {
-    background-color: #e74c3c;
+    background-color: aliceblue;
     color: white;
     border: none;
     cursor: pointer;
@@ -101,7 +101,7 @@ header .profile-section form {
 }
 
 .btn.logout:hover {
-    background-color: #c0392b;
+    background-color: #d0cdcc;
 }
 
 

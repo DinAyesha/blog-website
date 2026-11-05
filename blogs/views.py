@@ -17,12 +17,24 @@ def login(request):
        email = request.POST.get("email", "").strip().lower()
        password = request.POST.get("password", "")
 
-       user = authenticate(
-          request,
-          username=email,
-          password=password
-       )
+       if not email:
+          messages.error(request,"Please enter your email.")
+          return render(request,"login.html")
+       if not password:
+          messages.error(request,"Please enter your password.")
+          return render(request,"login.html")
+       try:
+          validate_email(email)
+       except ValidationError as error:
+          messages.error(request,"Please enter a valid email address.")
+          return render(request,"login.html")
 
+       user = authenticate(
+                 request,
+                 username=email,
+                 password=password
+              )
+       
        if not user:
           messages.error(request, "Invalid email or password")
           return render(request,"login.html")
@@ -32,6 +44,7 @@ def login(request):
        return redirect("blogs")
     
     return render(request,"login.html")
+
 def logout_view(request):
    logout(request)
 
