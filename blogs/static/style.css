@@ -91,7 +91,7 @@ header .profile-section form {
 }
 
 .btn.logout {
-    background-color: aliceblue;
+    background-color: rgb(161, 187, 209);
     color: white;
     border: none;
     cursor: pointer;
