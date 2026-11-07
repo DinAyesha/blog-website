@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout
+from .models import BlogPost, Category
 
 # Create your views here.
 def blogs(request):
@@ -118,5 +119,14 @@ def signup(request):
     return render(request, "signup.html")
 
 def blog(request):
-    template = loader.get_template('blog.html')
-    return HttpResponse(template.render())
+    posts = BlogPost.objects.filter(
+       status = 'published'
+    ).select_related('author', 'category').order_by('-created_at')
+
+    categories = Category.objects.all()
+    context = {
+       'posts': posts,
+       'categories': categories,
+    }
+
+    return render(request, "blog.html", context)

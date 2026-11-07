@@ -29,8 +29,7 @@ class BlogPost(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='blog_posts',
-        null=True,
-        blank=True
+       
     )
 
     category = models.ForeignKey(
