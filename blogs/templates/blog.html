@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Blog - MyBlog</title>
@@ -31,8 +31,30 @@
         </nav>
 
         <div class="buttons">
-            <a href="{% url 'login' %}" class="btn login">Login</a>
-            <a href="{% url 'signup' %}" class="btn signup">Sign Up</a>
+            {% if user.is_authenticated %}
+                <div class="profile-section">
+
+                <div class="profile-icon">
+                    <img src="{% static 'images/profile.png' %}" alt="Profile">
+                </div>
+
+                <span class="profile-name">
+                    {{ user.get_full_name|default:user.username }}
+                </span>
+
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn logout">
+                        Logout
+                    </button>
+                </form>
+
+            </div>
+
+            {% else %}
+               <a href="{% url 'login' %}" class="btn login">Login</a>
+               <a href="{% url 'signup' %}" class="btn signup">Sign Up</a>
+            {% endif %}
         </div>
     </header>
 
@@ -47,12 +69,25 @@
 
         <!-- Search and New Blog -->
         <div class="blog-top">
-            <form class="blog-search">
-                <input type="text" placeholder="Search blogs...">
-                <button type="button">Search</button>
+            <form method="GET" action="{% url 'blog' %}" class="blog-search">
+                <input 
+                type="text" 
+                name="search" 
+                placeholder="Search blogs..." 
+                value="{{ search_query }}"
+                >
+
+                {% if selected_category %}
+                <input 
+                type="hidden" 
+                name="category" 
+                value="{{ selected_category.id }}"
+                >
+                {% endif %}
+                <button type="submit">Search</button>
             </form>
 
-            <a href="#" class="new-blog-btn">+ New Blog</a>
+            <a href="{% url 'create_blog' %}" class="new-blog-btn">+ New Blog</a>
         </div>
 
         <!-- Blog Categories -->
@@ -60,12 +95,21 @@
             <h2>Categories</h2>
 
             <div class="category-list">
-                <a href="#all-posts" class="category-link active">All Posts</a>
-                <a href="#daily-life" class="category-link">Daily Life</a>
-                <a href="#technology" class="category-link">Technology</a>
-                <a href="#food" class="category-link">Food &amp; Recipes</a>
-                <a href="#travel" class="category-link">Travel</a>
-                <a href="#education" class="category-link">Education</a>
+                <a href="{% url 'blog' %}" 
+                class="category-link {% if not selected_category %}active{% endif %}">
+                 All Posts
+                </a>
+
+                {% for category in categories %}
+                   <a href="{% url 'blog' %}?category={{ category.id }}" 
+                    class="category-link {% if selected_category.id == category.id %}active{% endif %}">
+                    {{ category.name }}
+                </a>
+
+                {% empty %}
+                   <span>No categories available.</span>
+                {% endfor %}
+                
             </div>
         </section>
 
@@ -79,79 +123,65 @@
             <div class="blog-posts">
 
                 <!-- Blog 1 -->
-                <article class="blog-card" id="daily life">
+                 {% for post in posts %}
+                <article class="blog-card">
+                    {% if post.category %}
+                    {% if post.category.name == "Daily Life" %}
                     <img src="{% static 'images/alone .jpeg' %}"
                          alt="Daily life blog"
                          class="blog-image">
 
-                    <span class="blog-tag">Daily Life</span>
-                    <h3>A Beautiful Day in My Life</h3>
-                    <p class="blog-description">
-                        Every day gives us a new opportunity to learn,
-                        grow and create beautiful memories.
-                    </p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
-                </article>
-
-                <!-- Blog 2 -->
-                <article class="blog-card" id="technology">
+                    {% elif post.category.name == "Technology" %}
                     <img src="{% static 'images/tech.jpeg' %}"
                          alt="Technology blog"
                          class="blog-image">
 
-                    <span class="blog-tag">Technology</span>
-                    <h3>How Technology Changes Our Lives</h3>
-                    <p class="blog-description">
-                        Technology makes communication easier and
-                        helps us learn and work in new ways.
-                    </p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
-                </article>
-
-                <!-- Blog 3 -->
-                <article class="blog-card" id="food">
+                   {% elif post.category.name == "Food & Recipes" %}
                     <img src="{% static 'images/breakfast.jpeg' %}"
                          alt="Food and recipes blog"
                          class="blog-image">
 
-                    <span class="blog-tag">Food &amp; Recipes</span>
-                    <h3>Easy Recipes to Try at Home</h3>
-                    <p class="blog-description">
-                        Discover simple and delicious recipes that
-                        you can prepare in your own kitchen.
-                    </p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
-                </article>
-
-                <!-- Blog 4 -->
-                <article class="blog-card" id="travel">
+                    {% elif post.category.name == "Travel" %}
                     <img src="{% static 'images/travel.jpeg' %}"
                          alt="Travel blog"
                          class="blog-image">
 
-                    <span class="blog-tag">Travel</span>
-                    <h3>Exploring Beautiful Places</h3>
-                    <p class="blog-description">
-                        Travel lets us discover new places, experience
-                        different cultures and make memories.
-                    </p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
-                </article>
-
-                <!-- Blog 5 -->
-                <article class="blog-card" id="education">
+                    {% elif post.category.name == "Education" %}
                     <img src="{% static 'images/education.jpeg' %}"
                          alt="Education blog"
                          class="blog-image">
 
-                    <span class="blog-tag">Education</span>
-                    <h3>Tips for Better Learning</h3>
+                    {% else %}
+                    <img src="{% static 'images/alone .jpeg' %}"
+                         alt="Blog"
+                         class="blog-image">
+                    {% endif %}
+
+                    {% else %}
+                    <img src="{% static 'images/alone .jpeg' %}"
+                         alt="Blog"
+                         class="blog-image">
+                    {% endif %}
+
+                    <span class="blog-tag">
+                        {{ post.category.name|default:"Uncategorized" }}
+                    </span>
+
+                    <h3>{{ post.title }}</h3>
+
                     <p class="blog-description">
-                        Good study habits and regular practice can
-                        make learning easier and more enjoyable.
+                        {{ post.content|truncatewords:20 }}
                     </p>
-                    <a href="#" class="read-more">Read More &rarr;</a>
+
+                    <a href="{% url 'blog_detail' post.id %}" class="read-more">Read More &rarr;</a>
+
+
                 </article>
+
+            {% empty %}
+                <p>No published blog available yet.</p>
+            {% endfor %}
+
 
             </div>
         </section>

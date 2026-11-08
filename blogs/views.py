@@ -9,6 +9,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout
 from .models import BlogPost, Category
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def blogs(request):
@@ -123,10 +125,93 @@ def blog(request):
        status = 'published'
     ).select_related('author', 'category').order_by('-created_at')
 
+    category_id = request.GET.get('category')
+    search_query = request.GET.get('search', '').strip()
+
+    selected_category = None
+
+    if category_id and category_id.isdigit():
+       selected_category = Category.objects.filter(
+          id=category_id
+       ).first()
+
+       posts = posts.filter(category_id=category_id)
+
+    if search_query:
+       posts = posts.filter(
+          Q(title__icontains=search_query) |
+          Q(content__icontains=search_query)
+       )  
+
     categories = Category.objects.all()
     context = {
        'posts': posts,
        'categories': categories,
+       'selected_category': selected_category,
+       'search_query': search_query,
     }
+    
 
     return render(request, "blog.html", context)
+
+def blog_detail(request, post_id):
+    post = BlogPost.objects.select_related(
+        'author', 'category'
+    ).get(
+        id=post_id,
+        status='published'
+    )
+
+    context = {
+        'post': post,
+    }
+
+    return render(request, 'blog_detail.html', context)
+
+@login_required
+def create_blog(request):
+    categories = Category.objects.all()
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        category_id = request.POST.get('category')
+        content = request.POST.get('content', '').strip()
+        status = request.POST.get('status', 'draft')
+
+        if not title or not content:
+            messages.error(request, "Title and Content are required.")
+
+        elif status not in ['draft', 'published']:
+            messages.error(request, "Invalid blog status.")
+
+        else:
+            category = None
+
+            if category_id:
+                category = Category.objects.filter(
+                    id=category_id
+                ).first()
+
+                if category is None:
+                    messages.error(request, "Invalid category.")
+                    return render(
+                        request,
+                        'create_blog.html',
+                        {'categories': categories}
+                    )
+
+            BlogPost.objects.create(
+                title=title,
+                category=category,
+                content=content,
+                author=request.user,
+                status=status
+            )
+
+            return redirect('blog')
+
+    context = {
+        'categories': categories,
+    }
+
+    return render(request, 'create_blog.html', context)

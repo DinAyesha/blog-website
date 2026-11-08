@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }} - MyBlog</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">MyBlog</div>
+    </header>
+
+    <main class="blog-container">
+
+        <article class="blog-card">
+
+            <span class="blog-tag">
+                {{ post.category.name|default:"Uncategorized" }}
+            </span>
+
+            <h1>{{ post.title }}</h1>
+
+            <p>
+                By {{ post.author.username }}
+            </p>
+
+            <p>
+                Published: {{ post.created_at|date:"F d, Y" }}
+            </p>
+
+            <div class="blog-description">
+                {{ post.content|linebreaks }}
+            </div>
+
+            <a href="{% url 'blog' %}" class="read-more">
+                &larr; Back to Blogs
+            </a>
+
+        </article>
+
+    </main>
+
+</body>
+</html>
