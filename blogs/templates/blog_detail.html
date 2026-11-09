@@ -16,6 +16,48 @@
     <main class="blog-container">
 
         <article class="blog-card">
+            {% if post.image %}
+                 <img src="{{ post.image.url }}"
+                 alt="{{ post.title }}"
+                 class="blog-image">
+
+            {% elif post.category %}
+               {% if post.category.name == "Daily Life" %}
+                  <img src="{% static 'images/alone .jpeg' %}"
+                  alt="Daily life blog"
+                  class="blog-image">
+
+                {% elif post.category.name == "Technology" %}
+                  <img src="{% static 'images/tech.jpeg' %}"
+                  alt="Technology blog"
+                  class="blog-image">
+
+                {% elif post.category.name == "Food & Recipes" %}
+                   <img src="{% static 'images/breakfast.jpeg' %}"
+                   alt="Food and recipes blog"
+                   class="blog-image">
+
+                {% elif post.category.name == "Travel" %}
+                   <img src="{% static 'images/travel.jpeg' %}"
+                   alt="Travel blog"
+                   class="blog-image">
+
+                {% elif post.category.name == "Education" %}
+                   <img src="{% static 'images/education.jpeg' %}"
+                   alt="Education blog"
+                   class="blog-image">
+
+                {% else %}
+                   <img src="{% static 'images/alone .jpeg' %}"
+                   alt="Blog"
+                   class="blog-image">
+                {% endif %}
+
+                {% else %}
+                   <img src="{% static 'images/alone .jpeg' %}"
+                   alt="Blog"
+                   class="blog-image">
+                {% endif %}
 
             <span class="blog-tag">
                 {{ post.category.name|default:"Uncategorized" }}

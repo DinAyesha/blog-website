@@ -27,13 +27,13 @@
                     <a href="{% url 'blogs' %}" class="active">Home</a>
                 </li>
                 <li>
-                    <a href="{% url 'blogs' %}" class="active">About</a>
+                    <a href="{% url 'about' %}" class="active">About</a>
                 </li>
                 <li>
                     <a href="{% url 'blog' %}" class="active">Blog</a>
                 </li>
                 <li>
-                    <a href="{% url 'blogs' %}" class="active">Contact</a>
+                    <a href="{% url 'contact' %}" class="active">Contact</a>
                 </li>
             </ul>
         </nav>
@@ -89,55 +89,63 @@
     </section>
 
     <!-- Latest Posts Section -->
-    <section class="container" id="blog">
+    
+<section class="container" id="blog">
 
-        <div class="section-header">
-            <h2>Latest Posts</h2>
-            <a href="{% url 'blogs' %}" class="view-all">View All</a>
-        </div>
+    <div class="section-header">
+        <h2>Latest Posts</h2>
+        <a href="{% url 'blog' %}" class="view-all">View All</a>
+    </div>
 
-        <div class="posts">
+    <div class="posts">
 
-            <!-- First Blog Post -->
-            <article class="post-card">
-                <img
-                    src="{% static 'images/productive.jpg' %}"
-                    alt="Daily productivity">
+        {% for post in latest_posts %}
 
-                <h3>How I Stay Productive</h3>
+        <article class="post-card">
 
-                <p>
-                    Sharing my simple daily routine,
-                    how I spend my day and keep myself energetic.
-                </p>
+            {% if post.image %}
+                <img src="{{ post.image.url }}"
+                     alt="{{ post.title }}">
+            {% elif post.category.name == "Daily Life" %}
+                <img src="{% static 'images/alone .jpeg' %}"
+                     alt="{{ post.title }}">
+            {% elif post.category.name == "Technology" %}
+                <img src="{% static 'images/tech.jpeg' %}"
+                     alt="{{ post.title }}">
+            {% elif post.category.name == "Food & Recipes" %}
+                <img src="{% static 'images/breakfast.jpeg' %}"
+                     alt="{{ post.title }}">
+            {% elif post.category.name == "Travel" %}
+                <img src="{% static 'images/travel.jpeg' %}"
+                     alt="{{ post.title }}">
+            {% elif post.category.name == "Education" %}
+                <img src="{% static 'images/education.jpeg' %}"
+                     alt="{{ post.title }}">
+            {% else %}
+                <img src="{% static 'images/productive.jpg' %}"
+                     alt="{{ post.title }}">
+            {% endif %}
 
-                <div class="meta">
-                    <span>Oct 3, 2025</span>
-                    <span>3 Comments</span>
-                </div>
-            </article>
+            <h3>{{ post.title }}</h3>
 
-            <!-- Second Blog Post -->
-            <article class="post-card">
-                <img
-                    src="{% static 'images/dish.jpg' %}"
-                    alt="Homemade recipe">
+            <p>
+                {{ post.content|truncatewords:20 }}
+            </p>
 
-                <h3>Trying New Recipe</h3>
+            <div class="meta">
+                <span>{{ post.created_at|date:"M d, Y" }}</span>
+                <span>{{ post.author.username }}</span>
+            </div>
 
-                <p>
-                    This weekend, I tried cooking a new recipe
-                    that I discovered on Instagram.
-                </p>
+        </article>
 
-                <div class="meta">
-                    <span>Jan 14, 2026</span>
-                    <span>17 Comments</span>
-                </div>
-            </article>
+        {% empty %}
+            <p>No published blogs available yet.</p>
+        {% endfor %}
 
-        </div>
-    </section>
+    </div>
+</section>
+        
     </main>
 <!--Footer -->
      <footer>

@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Blog - MyBlog</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+
+        <div class="logo">MyBlog</div>
+
+        <nav class="nav-links">
+            <ul>
+                <li><a href="{% url 'blogs' %}">Home</a></li>
+                <li><a href="{% url 'blogs' %}#about">About</a></li>
+                <li><a href="{% url 'blog' %}">Blog</a></li>
+                <li><a href="{% url 'blogs' %}#contact">Contact</a></li>
+            </ul>
+        </nav>
+
+        <div class="buttons">
+
+            {% if user.is_authenticated %}
+
+                <div class="profile-section">
+
+                    <div class="profile-icon">
+                        <img src="{% static 'images/profile.png' %}" alt="Profile">
+                    </div>
+
+                    <span class="profile-name">
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn logout">
+                            Logout
+                        </button>
+                    </form>
+
+                </div>
+
+            {% else %}
+
+                <a href="{% url 'login' %}" class="btn login">Login</a>
+                <a href="{% url 'signup' %}" class="btn signup">Sign Up</a>
+
+            {% endif %}
+
+        </div>
+
+    </header>
+
+
+    <!-- Edit Blog Section -->
+    <main class="create-blog-container">
+
+        <div class="create-blog-card">
+
+            <h1>Edit Blog</h1>
+
+            <p class="create-blog-subtitle">
+                Update your blog and share your latest thoughts.
+            </p>
+
+            <form method="POST" enctype="multipart/form-data" class="create-blog-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="title">Blog Title</label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value="{{ post.title }}"
+                        placeholder="Enter your blog title"
+                        required
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="image">Blog Image</label>
+
+                    {% if post.image %}
+                        <img
+                            src="{{ post.image.url }}"
+                            alt="{{ post.title }}"
+                            class="blog-image"
+                        >
+                        <p>Choose a new image if you want to replace the current one.</p>
+                    {% endif %}
+
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        accept="image/*"
+                    >
+                </div>
+
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+
+                    <select id="category" name="category">
+
+                        <option value="">Select a category</option>
+
+                        {% for category in categories %}
+                            <option
+                                value="{{ category.id }}"
+                                {% if post.category_id == category.id %}selected{% endif %}
+                            >
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="content">Blog Content</label>
+
+                    <textarea
+                        id="content"
+                        name="content"
+                        rows="12"
+                        placeholder="Write your blog here..."
+                        required
+                    >{{ post.content }}</textarea>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="status">Publication Status</label>
+
+                    <select id="status" name="status">
+
+                        <option value="draft" {% if post.status == 'draft' %}selected{% endif %}>
+                            Save as Draft
+                        </option>
+
+                        <option value="published" {% if post.status == 'published' %}selected{% endif %}>
+                            Publish Now
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button type="submit" class="create-blog-submit">
+                        Update Blog
+                    </button>
+
+                    <a href="{% url 'blog' %}" class="cancel-blog-btn">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

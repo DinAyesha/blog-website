@@ -19,13 +19,13 @@
                     <a href="{% url 'blogs' %}">Home</a>
                 </li>
                 <li>
-                    <a href="{% url 'blogs' %}#about">About</a>
+                    <a href="{% url 'about' %}#about">About</a>
                 </li>
                 <li>
                     <a href="{% url 'blog' %}" class="active">Blog</a>
                 </li>
                 <li>
-                    <a href="{% url 'blogs' %}#contact">Contact</a>
+                    <a href="{% url 'contact' %}#contact">Contact</a>
                 </li>
             </ul>
         </nav>
@@ -87,7 +87,9 @@
                 <button type="submit">Search</button>
             </form>
 
+            {% if user.is_authenticated and not user.is_staff %}
             <a href="{% url 'create_blog' %}" class="new-blog-btn">+ New Blog</a>
+            {% endif %}
         </div>
 
         <!-- Blog Categories -->
@@ -122,10 +124,14 @@
 
             <div class="blog-posts">
 
-                <!-- Blog 1 -->
-                 {% for post in posts %}
+                <!-- Blog post -->
+                {% for post in posts %}
                 <article class="blog-card">
-                    {% if post.category %}
+                  {% if post.image %}
+                      <img src="{{ post.image.url }}"
+                      alt="{{ post.title }}"
+                      class="blog-image">
+                 {% elif post.category %}
                     {% if post.category.name == "Daily Life" %}
                     <img src="{% static 'images/alone .jpeg' %}"
                          alt="Daily life blog"
@@ -174,9 +180,27 @@
                     </p>
 
                     <a href="{% url 'blog_detail' post.id %}" class="read-more">Read More &rarr;</a>
+                    
+                {% if user.is_authenticated and post.author_id == user.id and not user.is_staff %}
+                    <div class="blog-actions">
+                    <a href="{% url 'edit_blog' post.id %}" class="edit-blog-btn">
+                    Edit Blog
+                    </a>
 
+            <form method="POST" action="{% url 'delete_blog' post.id %}"
+                onsubmit="return confirm('Are you sure you want to delete this blog?');">
 
-                </article>
+                {% csrf_token %}
+
+                    <button type="submit" class="delete-blog-btn">
+                    Delete Blog
+                    </button>
+
+            </form>
+          </div>
+            {% endif %}  
+
+              </article>             
 
             {% empty %}
                 <p>No published blog available yet.</p>

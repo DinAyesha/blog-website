@@ -1,5 +1,5 @@
-from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.shortcuts import render,redirect, get_object_or_404
+from django.http import HttpResponseForbidden
 from django.template import loader
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
@@ -14,7 +14,21 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def blogs(request):
-    return render(request,"home.html")
+    latest_posts = BlogPost.objects.filter(
+        status='published'
+    ).select_related(
+        'author', 'category'
+    ).order_by('-created_at')[:2]
+
+    categories = Category.objects.all()
+
+    context = {
+        'latest_posts': latest_posts,
+        'categories': categories,
+    }
+
+    return render(request, 'home.html', context)
+
 def login(request):
     if request.method == "POST":
        email = request.POST.get("email", "").strip().lower()
@@ -217,3 +231,97 @@ def create_blog(request):
     }
 
     return render(request, 'create_blog.html', context)
+
+@login_required
+def edit_blog(request, post_id):
+
+    if request.user.is_staff:
+        return HttpResponseForbidden("Admin cannot edit blogs.")
+
+    post = get_object_or_404(
+        BlogPost,
+        id=post_id,
+        author=request.user
+    )
+
+    categories = Category.objects.all()
+
+    if request.method == 'POST':
+
+        title = request.POST.get('title', '').strip()
+        category_id = request.POST.get('category')
+        content = request.POST.get('content', '').strip()
+        image = request.FILES.get('image')
+        status = request.POST.get('status', 'draft')
+
+        if not title or not content:
+            messages.error(request, "Title and Content are required.")
+
+        elif status not in ['draft', 'published']:
+            messages.error(request, "Invalid blog status.")
+
+        else:
+            category = None
+
+            if category_id:
+                category = Category.objects.filter(
+                    id=category_id
+                ).first()
+
+                if category is None:
+                    messages.error(request, "Invalid category.")
+                    return render(
+                        request,
+                        'edit_blog.html',
+                        {
+                            'post': post,
+                            'categories': categories
+                        }
+                    )
+
+            post.title = title
+            post.category = category
+            post.content = content
+            post.status = status
+
+            if image:
+                post.image = image
+
+            post.save()
+
+            messages.success(request, "Blog updated successfully!")
+
+            return redirect('blog')
+
+    context = {
+        'post': post,
+        'categories': categories,
+    }
+
+    return render(request, 'edit_blog.html', context)
+
+@login_required
+def delete_blog(request, post_id):
+
+    if request.user.is_staff:
+        return HttpResponseForbidden("Admin cannot delete blogs.")
+
+    post = get_object_or_404(
+        BlogPost,
+        id=post_id,
+        author=request.user
+    )
+
+    if request.method == 'POST':
+        post.delete()
+        messages.success(request, "Blog deleted successfully!")
+        return redirect('blog')
+
+    return redirect('blog')
+
+def about(request):
+    return render(request, 'about.html')
+
+
+def contact(request):
+    return render(request, 'contact.html')
