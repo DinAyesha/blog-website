@@ -176,6 +176,7 @@ def create_blog(request):
         title = request.POST.get('title', '').strip()
         category_id = request.POST.get('category')
         content = request.POST.get('content', '').strip()
+        image = request.FILES.get('image')
         status = request.POST.get('status', 'draft')
 
         if not title or not content:
@@ -202,6 +203,7 @@ def create_blog(request):
 
             BlogPost.objects.create(
                 title=title,
+                image=image,
                 category=category,
                 content=content,
                 author=request.user,
