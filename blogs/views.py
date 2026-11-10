@@ -45,13 +45,16 @@ def login(request):
        except ValidationError as error:
           messages.error(request,"Please enter a valid email address.")
           return render(request,"login.html")
-
-       user = authenticate(
+       
+       user_obj = User.objects.filter(email__iexact=email).first()
+       if user_obj:
+        user = authenticate(
                  request,
-                 username=email,
+                 username=user_obj.username,
                  password=password
               )
-       
+       else:
+          user = None
        if not user:
           messages.error(request, "Invalid email or password")
           return render(request,"login.html")
@@ -184,6 +187,9 @@ def blog_detail(request, post_id):
 
 @login_required
 def create_blog(request):
+    if request.user.is_staff:
+       messages.error(request, "Admins are not allowed to create blog posts. ")
+       return(redirect, 'blog')
     categories = Category.objects.all()
 
     if request.method == 'POST':
