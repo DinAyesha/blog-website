@@ -109,21 +109,27 @@
             {% elif post.category.name == "Daily Life" %}
                 <img src="{% static 'images/alone .jpeg' %}"
                      alt="{{ post.title }}">
+                
             {% elif post.category.name == "Technology" %}
                 <img src="{% static 'images/tech.jpeg' %}"
                      alt="{{ post.title }}">
+                 
             {% elif post.category.name == "Food & Recipes" %}
                 <img src="{% static 'images/breakfast.jpeg' %}"
                      alt="{{ post.title }}">
+                
             {% elif post.category.name == "Travel" %}
                 <img src="{% static 'images/travel.jpeg' %}"
                      alt="{{ post.title }}">
+                 
             {% elif post.category.name == "Education" %}
                 <img src="{% static 'images/education.jpeg' %}"
                      alt="{{ post.title }}">
+                
             {% else %}
                 <img src="{% static 'images/productive.jpg' %}"
                      alt="{{ post.title }}">
+
             {% endif %}
 
             <h3>{{ post.title }}</h3>
@@ -136,7 +142,10 @@
                 <span>{{ post.created_at|date:"M d, Y" }}</span>
                 <span>{{ post.author.username }}</span>
             </div>
-
+             
+            <a href="{% url 'blog_detail' post.id %}?next={{ request.path|urlencode }}">
+                 Read More &rarr;
+            </a>
         </article>
 
         {% empty %}

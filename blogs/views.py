@@ -11,6 +11,8 @@ from django.contrib.auth import logout
 from .models import BlogPost, Category
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from PIL import Image
+from PIL import UnidentifiedImageError
 
 # Create your views here.
 def blogs(request):
@@ -18,7 +20,7 @@ def blogs(request):
         status='published'
     ).select_related(
         'author', 'category'
-    ).order_by('-created_at')[:2]
+    ).order_by('-created_at')[:3]
 
     categories = Category.objects.all()
 
@@ -181,15 +183,18 @@ def blog_detail(request, post_id):
 
     context = {
         'post': post,
+        'next_page': request.GET.get('next', '/'),
     }
 
     return render(request, 'blog_detail.html', context)
 
 @login_required
 def create_blog(request):
+
     if request.user.is_staff:
-       messages.error(request, "Admins are not allowed to create blog posts. ")
-       return(redirect, 'blog')
+        messages.error(request, "Admins are not allowed to create blog posts.")
+        return redirect('blog')
+
     categories = Category.objects.all()
 
     if request.method == 'POST':
@@ -221,6 +226,24 @@ def create_blog(request):
                         {'categories': categories}
                     )
 
+            # Image validation
+            if image:
+                try:
+                    img = Image.open(image)
+                    img.verify()
+                    image.seek(0)
+
+                except (UnidentifiedImageError, OSError, ValueError):
+                    messages.error(
+                        request,
+                        "Please upload a valid image file."
+                    )
+                    return render(
+                        request,
+                        'create_blog.html',
+                        {'categories': categories}
+                    )
+
             BlogPost.objects.create(
                 title=title,
                 image=image,
@@ -230,6 +253,7 @@ def create_blog(request):
                 status=status
             )
 
+            messages.success(request, "Blog created successfully!")
             return redirect('blog')
 
     context = {
@@ -290,9 +314,21 @@ def edit_blog(request, post_id):
             post.content = content
             post.status = status
 
-            if image:
-                post.image = image
+        if image:
+            try:
+               img = Image.open(image)
+               img.verify()
+               image.seek(0)
+            except (UnidentifiedImageError, OSError, ValueError):
+               messages.error(request, "Please upload a valid image file.")
+               return render(request, 'edit_blog.html',
+                   {
+                      'post': post,
+                      'categories': categories,
+                   }                       
+                )
 
+            post.image = image
             post.save()
 
             messages.success(request, "Blog updated successfully!")

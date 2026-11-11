@@ -77,8 +77,8 @@
                 {{ post.content|linebreaks }}
             </div>
 
-            <a href="{% url 'blog' %}" class="read-more">
-                &larr; Back to Blogs
+            <a href="{{ next_page }}" class="read-more">
+               &larr; Back
             </a>
 
         </article>
