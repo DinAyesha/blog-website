@@ -226,7 +226,6 @@ def create_blog(request):
                         {'categories': categories}
                     )
 
-            # Image validation
             if image:
                 try:
                     img = Image.open(image)
@@ -342,24 +341,47 @@ def edit_blog(request, post_id):
 
     return render(request, 'edit_blog.html', context)
 
+
 @login_required
 def delete_blog(request, post_id):
 
-    if request.user.is_staff:
-        return HttpResponseForbidden("Admin cannot delete blogs.")
-
-    post = get_object_or_404(
-        BlogPost,
-        id=post_id,
-        author=request.user
-    )
-
-    if request.method == 'POST':
-        post.delete()
-        messages.success(request, "Blog deleted successfully!")
+    if request.method != 'POST':
         return redirect('blog')
 
+    if request.user.is_staff:
+        post = get_object_or_404(
+            BlogPost,
+            id=post_id
+        )
+
+    else:
+        post = get_object_or_404(
+            BlogPost,
+            id=post_id,
+            author=request.user
+        )
+
+    post.delete()
+
+    messages.success(request, "Blog deleted successfully!")
+
     return redirect('blog')
+
+@login_required
+def my_blog(request):
+
+    posts = BlogPost.objects.filter(
+        author=request.user
+    ).select_related(
+        'author', 'category'
+    ).order_by('-created_at')
+
+    context = {
+        'posts': posts,
+    }
+
+    return render(request, 'my_blog.html', context)
+
 
 def about(request):
     return render(request, 'about.html')

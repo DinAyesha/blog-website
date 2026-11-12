@@ -1,0 +1,447 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$sVRSEUYuMTfrzZb3k7BoR7$zzRvCLR1oLWG5I5qK1NofoWejmSso44UUTswIxyNXjM=",
+    "last_login": "2026-11-11T04:13:31.861Z",
+    "is_superuser": true,
+    "username": "Din",
+    "first_name": "",
+    "last_name": "",
+    "email": "din4@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-10-27T03:40:14.506Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$Fsc3mTGeIfc7UrV42gAb7M$upwDDOz6ahec/ltsoeIPUTGKSSHXo2CRKIRJOApryh4=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "johndoe@gmail.com",
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "johndoe@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-11-01T07:18:30.904Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$lsQNTsyHveL3ymHt8lwDTB$1rbIHD6W3bFYilmBz9mnQHIGfLXI5i7xkE7NEbWOgOQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "jony@gmail.com",
+    "first_name": "jony",
+    "last_name": "jony",
+    "email": "jony@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-11-01T09:03:02.967Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$OYl5Zpuf2ISq1lclfSIwWO$ybipfGAWh+up+j1vlxmiXEQ5yRPmIH9lmM3nbFVywVQ=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "abc@gmail.com",
+    "first_name": "abc",
+    "last_name": "",
+    "email": "abc@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-11-01T11:26:48.154Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$XSjXC8dSeNatiog1AbnhuR$tX8WdFTIa+xLJZdXkwtH0G4kl5fRVqnzmgElTy/m+Zk=",
+    "last_login": "2026-11-10T08:46:15.287Z",
+    "is_superuser": false,
+    "username": "din@gmail.com",
+    "first_name": "Din",
+    "last_name": "Din",
+    "email": "din@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-11-02T11:23:10.035Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$DUQJeXnjEwNzJsW1Lyzgic$QAzcxlyyQen4TjoFocEb1PAnn91/d1QA6TyLTrJNusA=",
+    "last_login": "2026-11-11T08:24:29.718Z",
+    "is_superuser": false,
+    "username": "john@gmail.com",
+    "first_name": "John",
+    "last_name": "John",
+    "email": "john@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-11-10T04:28:54.106Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1500000$lGvyjx2VNVjuRfjPbVXuSy$c1hAcxn09UGhsvYFQ/0vNwBKY4L/pPIUcxEWZ9ux5zU=",
+    "last_login": "2026-11-11T04:10:18.638Z",
+    "is_superuser": false,
+    "username": "kiron@example.com",
+    "first_name": "Kiron",
+    "last_name": "Mala",
+    "email": "kiron@example.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-11-11T03:59:08.610Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "vf2tbiqdwx33gw1emsvz60o45376o6fq",
+  "fields": {
+    "session_data": ".eJxVjDEOgzAMAP_iuYogjmnM2J03oCR2Cm0VJAJT1b9XSAztene6N4xh36Zxr7qOs0APV7j8shjSU8sh5BHKfTFpKds6R3Mk5rTVDIvo63a2f4Mp1Al68IpWhDEHSw216hUp5gZz44jRsrInlOyYfOtdF13MmESFguu04wSfL9ipN8U:1xR3d7:1qJcXJL3zqFeKRwr54q_CEzAXFMfCRDwL6md1CMYXls",
+    "expire_date": "2026-11-25T08:24:29.731Z"
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 1,
+  "fields": {
+    "name": "Daily Life",
+    "description": ""
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 2,
+  "fields": {
+    "name": "Technology",
+    "description": ""
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 3,
+  "fields": {
+    "name": "Food & Recipes",
+    "description": "This is all about regular food blogging."
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 4,
+  "fields": {
+    "name": "Travel",
+    "description": ""
+  }
+},
+{
+  "model": "blogs.category",
+  "pk": 5,
+  "fields": {
+    "name": "Education",
+    "description": ""
+  }
+},
+{
+  "model": "blogs.blogpost",
+  "pk": 2,
+  "fields": {
+    "title": "A Peaceful Road Trip Through the Mountains",
+    "content": "The beauty of the mountains always makes me feel peaceful and refreshed. One beautiful morning, I went on a road trip by car along a winding road surrounded by magnificent mountains.\r\n\r\nAs the car moved along the road, I could see green hills, tall trees, and clouds floating above the mountain peaks. The cool breeze came through the window, and the fresh mountain air made the journey even more enjoyable.\r\n\r\nEvery turn brought a new view. Sometimes, the road passed beside steep hills, and sometimes, it opened up to breathtaking landscapes. I couldn't resist taking a few pictures to capture those beautiful moments.\r\n\r\nThere was something special about driving through the mountains. Away from the noise and rush of city life, I could simply enjoy the road, the scenery, and the peaceful atmosphere.\r\n\r\nIt was not just a car journey; it was a beautiful experience that reminded me how wonderful nature can be. I hope to take another mountain road trip someday and discover even more beautiful places.",
+    "image": "",
+    "author": [
+      "Din"
+    ],
+    "category": 4,
+    "status": "published",
+    "created_at": "2026-10-27T04:21:39.322Z",
+    "updated_at": "2026-11-10T03:46:40.535Z"
+  }
+},
+{
+  "model": "blogs.blogpost",
+  "pk": 3,
+  "fields": {
+    "title": "The Power of Education in Building a Better Future",
+    "content": "Education is one of the most powerful tools that can change our lives. It gives us knowledge, helps us develop new skills, and teaches us how to understand the world around us.\r\n\r\nLearning is not only about reading books, passing exams, or getting good grades. It is also about developing critical thinking, solving problems, building confidence, and learning from our mistakes.\r\n\r\nIn today's world, education plays an important role in creating opportunities. With access to technology and online learning platforms, people can now explore new subjects and gain knowledge from almost anywhere.\r\n\r\nHowever, learning requires patience, curiosity, and consistency. Even a small amount of learning every day can make a big difference over time.\r\n\r\nI believe education is a lifelong journey. No matter how much we learn, there is always something new to discover. By continuing to learn and improve ourselves, we can build a brighter future.",
+    "image": "blog_images/education.jpeg",
+    "author": [
+      "din@gmail.com"
+    ],
+    "category": 5,
+    "status": "published",
+    "created_at": "2026-11-10T03:13:35.083Z",
+    "updated_at": "2026-11-10T03:13:35.083Z"
+  }
+},
+{
+  "model": "blogs.blogpost",
+  "pk": 4,
+  "fields": {
+    "title": "The Joy of Homemade Cooking",
+    "content": "Cooking at home is more than just preparing food; it is a way to express creativity and care. Homemade meals allow us to choose fresh ingredients, explore different flavors, and enjoy delicious dishes with our loved ones.\r\n\r\nYou don't need to be an expert chef to make something special. Start with simple recipes, use ingredients you already have, and try new combinations. Sometimes, the simplest homemade meals become our favorites.\r\n\r\nSo, take some time, enjoy the cooking process, and discover the joy of homemade food!",
+    "image": "blog_images/homemade.jpg",
+    "author": [
+      "john@gmail.com"
+    ],
+    "category": 3,
+    "status": "published",
+    "created_at": "2026-11-10T04:33:49.223Z",
+    "updated_at": "2026-11-10T04:33:49.223Z"
+  }
+},
+{
+  "model": "blogs.blogpost",
+  "pk": 6,
+  "fields": {
+    "title": "Artificial Intelligence: The Future of Technology",
+    "content": "Artificial Intelligence (AI) is one of the most exciting developments in modern technology. It allows computers and machines to perform tasks that usually require human intelligence, such as understanding language, recognizing images, and solving problems.\r\n\r\nAI is already being used in healthcare, education, transportation, business, and entertainment. For example, virtual assistants can answer questions, recommendation systems suggest content, and AI-powered tools help developers write and analyze code.\r\n\r\nAlthough AI offers many opportunities, it also raises important questions about privacy, accuracy, and job opportunities.\r\n\r\nAs AI continues to develop, learning how to use it responsibly will become an important skill for the future.",
+    "image": "blog_images/Ai.jpg",
+    "author": [
+      "john@gmail.com"
+    ],
+    "category": 2,
+    "status": "published",
+    "created_at": "2026-11-10T04:38:39.700Z",
+    "updated_at": "2026-11-10T04:38:39.700Z"
+  }
+},
+{
+  "model": "blogs.blogpost",
+  "pk": 7,
+  "fields": {
+    "title": "Cat",
+    "content": "My Cat is my friend",
+    "image": "blog_images/recipe_2.jpeg",
+    "author": [
+      "kiron@example.com"
+    ],
+    "category": 1,
+    "status": "published",
+    "created_at": "2026-11-11T04:04:21.967Z",
+    "updated_at": "2026-11-11T04:04:21.967Z"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-10-27T03:44:17.152Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "1",
+    "object_repr": "Daily Life",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-10-27T03:45:04.376Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "2",
+    "object_repr": "Technology",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-10-27T03:45:13.755Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "3",
+    "object_repr": "Travel",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-10-27T03:45:48.719Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "3",
+    "object_repr": "Travel",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Description\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-10-27T03:46:04.291Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "blogpost"
+    ],
+    "object_id": "1",
+    "object_repr": "About My last Weekend",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-10-27T04:21:34.751Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "4",
+    "object_repr": "Food",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-10-27T04:21:39.324Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "blogpost"
+    ],
+    "object_id": "2",
+    "object_repr": "About my travel  blog",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 8,
+  "fields": {
+    "action_time": "2026-11-09T04:23:20.734Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "category"
+    ],
+    "object_id": "5",
+    "object_repr": "Education",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 9,
+  "fields": {
+    "action_time": "2026-11-10T03:46:40.557Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "blogpost"
+    ],
+    "object_id": "2",
+    "object_repr": "A Peaceful Road Trip Through the Mountains",
+    "action_flag": 2,
+    "change_message": "[{\"changed\": {\"fields\": [\"Title\", \"Content\"]}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 10,
+  "fields": {
+    "action_time": "2026-11-10T05:00:14.278Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "blogs",
+      "blogpost"
+    ],
+    "object_id": "1",
+    "object_repr": "About My last Weekend",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 11,
+  "fields": {
+    "action_time": "2026-11-11T04:15:23.391Z",
+    "user": [
+      "Din"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "4",
+    "object_repr": "david@gmail.com",
+    "action_flag": 3,
+    "change_message": ""
+  }
+}
+]

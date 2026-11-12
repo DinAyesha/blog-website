@@ -16,10 +16,23 @@
 
         <nav class="nav-links">
             <ul>
-                <li><a href="{% url 'blogs' %}">Home</a></li>
-                <li><a href="{% url 'blogs' %}#about">About</a></li>
-                <li><a href="{% url 'blog' %}">Blog</a></li>
-                <li><a href="{% url 'blogs' %}#contact">Contact</a></li>
+                <li>
+                    <a href="{% url 'blogs' %}">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'blogs' %}"class="active">About</a>
+                </li>
+                <li>
+                    <a href="{% url 'blog' %}">Blog</a>
+                </li>
+                <li>
+                    <a href="{% url 'blogs' %}"class="active">Contact</a>
+                </li>
+            {% if user.is_authenticated and not user.is_staff %}
+                <li>
+                    <a href="{% url 'my_blog' %}">My Blog</a>
+                </li>
+            {% endif %}
             </ul>
         </nav>
 

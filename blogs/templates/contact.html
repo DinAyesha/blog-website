@@ -1,6 +1,8 @@
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,39 +12,98 @@
 
 <body>
 
+    <!-- Navigation Bar -->
     <header>
+
         <div class="logo">MyBlog</div>
 
         <nav class="nav-links">
             <ul>
-                <li><a href="{% url 'blogs' %}">Home</a></li>
-                <li><a href="{% url 'blog' %}">Blog</a></li>
-                <li><a href="{% url 'about' %}">About</a></li>
-                <li><a href="{% url 'contact' %}">Contact</a></li>
 
-                {% if user.is_authenticated %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}">Login</a></li>
-                    <li><a href="{% url 'signup' %}">Sign Up</a></li>
-                {% endif %}
+                <li>
+                    <a href="{% url 'blogs' %}">Home</a>
+                </li>
+
+                <li>
+                    <a href="{% url 'about' %}">About</a>
+                </li>
+
+                <li>
+                    <a href="{% url 'blog' %}">Blog</a>
+                </li>
+                <li>
+                    <a href="{% url 'contact' %}" class="active">Contact</a>
+                </li>
+            {% if user.is_authenticated and not user.is_staff %}
+                <li>
+                    <a href="{% url 'my_blog' %}">My Blog</a>
+                </li>
+            {% endif %}
+
             </ul>
         </nav>
+
+        <div class="buttons">
+
+            {% if user.is_authenticated %}
+
+                <div class="profile-section">
+
+                    <div class="profile-icon">
+                        <img src="{% static 'images/profile.png' %}" alt="Profile">
+                    </div>
+
+                    <span class="profile-name">
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn logout">
+                            Logout
+                        </button>
+                    </form>
+
+                </div>
+
+            {% else %}
+
+                <a href="{% url 'login' %}" class="btn login">
+                    Login
+                </a>
+
+                <a href="{% url 'signup' %}" class="btn signup">
+                    Sign Up
+                </a>
+
+            {% endif %}
+
+        </div>
+
     </header>
 
+
+    <!-- Contact Page Content -->
     <main class="contact-container">
 
         <section class="contact-heading">
+
             <h1>Contact Us</h1>
+
             <p>
                 Have a question, suggestion, or feedback?
                 We would love to hear from you.
             </p>
+
         </section>
+
 
         <section class="contact-content">
 
+            <!-- Contact Information -->
             <div class="contact-info">
+
                 <h2>Get in Touch</h2>
 
                 <p>
@@ -59,15 +120,20 @@
                     <h3>Website</h3>
                     <p>MyBlog</p>
                 </div>
+
             </div>
 
+
+            <!-- Contact Form -->
             <div class="contact-form-section">
+
                 <h2>Send Us a Message</h2>
 
                 <form method="POST" action="#">
                     {% csrf_token %}
 
                     <label for="name">Your Name</label>
+
                     <input
                         type="text"
                         id="name"
@@ -76,7 +142,9 @@
                         required
                     >
 
+
                     <label for="email">Your Email</label>
+
                     <input
                         type="email"
                         id="email"
@@ -85,7 +153,9 @@
                         required
                     >
 
+
                     <label for="subject">Subject</label>
+
                     <input
                         type="text"
                         id="subject"
@@ -94,7 +164,9 @@
                         required
                     >
 
+
                     <label for="message">Message</label>
+
                     <textarea
                         id="message"
                         name="message"
@@ -103,18 +175,25 @@
                         required
                     ></textarea>
 
+
                     <button type="submit" class="contact-btn">
                         Send Message
                     </button>
+
                 </form>
+
             </div>
 
         </section>
 
     </main>
 
+
+    <!-- Footer -->
     <footer>
+
         <p>&copy; 2026 MyBlog. All rights reserved.</p>
+
     </footer>
 
 </body>

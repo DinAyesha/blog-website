@@ -35,6 +35,11 @@
                 <li>
                     <a href="{% url 'contact' %}" class="active">Contact</a>
                 </li>
+            {% if user.is_authenticated and not user.is_staff %}
+                <li>
+                    <a href="{% url 'my_blog' %}">My Blog</a>
+                </li>
+            {% endif %}
             </ul>
         </nav>
 
@@ -143,7 +148,8 @@
                 <span>{{ post.author.username }}</span>
             </div>
              
-            <a href="{% url 'blog_detail' post.id %}?next={{ request.path|urlencode }}">
+            <a href="{% url 'blog_detail' post.id %}?next={{ request.path|urlencode }}"
+               class="read-more">
                  Read More &rarr;
             </a>
         </article>
