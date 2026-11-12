@@ -207,8 +207,12 @@ def blog(request):
     if search_query:
        posts = posts.filter(
           Q(title__icontains=search_query) |
-          Q(content__icontains=search_query)
-       )  
+          Q(content__icontains=search_query) |
+          Q(category__name__icontains=search_query) |
+          Q(author__username__icontains=search_query) |
+          Q(author__first_name__icontains=search_query) |
+          Q(author__last_name__icontains=search_query)
+    )
 
     categories = Category.objects.all()
     context = {
