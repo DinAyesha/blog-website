@@ -9,6 +9,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout
 from .models import BlogPost, Category
+from .models import Category, BlogPost, UserProfile
+from .forms import UserUpdateForm, UserProfileForm
+from .models import UserProfile
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from PIL import Image
@@ -126,18 +129,63 @@ def signup(request):
           messages.error(request, "Please accept Terms and conditions.")
           return render(request, "signup.html")
        
-       User.objects.create_user(
+       user = User.objects.create_user(
           username=username,
           email=email,
           password=password,
           first_name=first_name,
           last_name=last_name
         )
+       UserProfile.objects.create(user=user)
     
        messages.success(request, "Account created successfully! Please log in.")
        return redirect("login")
 
     return render(request, "signup.html")
+
+@login_required
+def edit_profile(request):
+
+    profile, created = UserProfile.objects.get_or_create(
+        user=request.user
+    )
+
+    if request.method == 'POST':
+
+        user_form = UserUpdateForm(
+            request.POST,
+            instance=request.user
+        )
+
+        profile_form = UserProfileForm(
+            request.POST,
+            request.FILES,
+            instance=profile
+        )
+
+        if user_form.is_valid() and profile_form.is_valid():
+
+            user_form.save()
+            profile_form.save()
+
+            messages.success(
+                request,
+                "Your profile has been updated successfully!"
+            )
+
+            return redirect('edit_profile')
+
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = UserProfileForm(instance=profile)
+
+    context = {
+        'user_form': user_form,
+        'profile_form': profile_form,
+    }
+
+    return render(request, 'edit_profile.html', context)
+
 
 def blog(request):
     posts = BlogPost.objects.filter(

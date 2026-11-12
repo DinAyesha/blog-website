@@ -39,23 +39,29 @@
         <div class="buttons">
             {% if user.is_authenticated %}
                 <div class="profile-section">
-
-                <div class="profile-icon">
+                <a href="{% url 'edit_profile' %}" class="profile-link">
+            <div class="profile-icon">
+                {% if user.profile.profile_picture %}
+                    <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
+                {% else %}
                     <img src="{% static 'images/profile.png' %}" alt="Profile">
-                </div>
-
-                <span class="profile-name">
-                    {{ user.get_full_name|default:user.username }}
-                </span>
-
-                <form method="POST" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn logout">
-                        Logout
-                    </button>
-                </form>
-
+                {% endif %}
             </div>
+
+            <span class="profile-name">
+                    {{user.get_full_name|default:user.username}}
+            </span>
+
+        </a>
+
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+                <button type="submit" class="btn logout">
+                    Logout
+                </button>
+        </form>
+
+        </div>
 
             {% else %}
                <a href="{% url 'login' %}" class="btn login">Login</a>

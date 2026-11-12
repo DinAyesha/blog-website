@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - MyBlog</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+
+<header>
+    <div class="logo">MyBlog</div>
+
+    <nav class="nav-links">
+        <ul>
+            <li>
+                <a href="{% url 'blogs' %}">Home</a>
+            </li>
+            <li>
+                <a href="{% url 'about' %}">About</a>
+            </li>
+            <li>
+                <a href="{% url 'blog' %}">Blog</a>
+            </li>
+
+            {% if user.is_authenticated and not user.is_staff %}
+            <li><a href="{% url 'my_blog' %}">My Blog</a></li>
+            {% endif %}
+
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="buttons">
+        <div class="profile-section">
+
+            <a href="{% url 'edit_profile' %}" class="profile-link">
+                <div class="profile-icon">
+                    {% if user.profile.profile_picture %}
+                        <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
+                    {% else %}
+                        <img src="{% static 'images/profile.png' %}" alt="Profile">
+                    {% endif %}
+                </div>
+
+                <span class="profile-name">
+                    {{ user.get_full_name|default:user.username }}
+                </span>
+            </a>
+
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn logout">Logout</button>
+            </form>
+
+        </div>
+    </div>
+</header>
+
+
+<main class="profile-edit-container">
+
+    <h1>Edit Your Profile</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="current-profile">
+
+        {% if profile_form.instance.profile_picture %}
+            <img src="{{ profile_form.instance.profile_picture.url }}"
+                 alt="Current Profile Picture">
+        {% else %}
+            <img src="{% static 'images/profile.png' %}"
+                 alt="Default Profile Picture">
+        {% endif %}
+
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <div class="profile-form-group">
+            <label for="{{ user_form.first_name.id_for_label }}">First Name</label>
+            {{ user_form.first_name }}
+            <div class="field-errors">{{ user_form.first_name.errors }}</div>
+        </div>
+
+        <div class="profile-form-group">
+            <label for="{{ user_form.last_name.id_for_label }}">Last Name</label>
+            {{ user_form.last_name }}
+            <div class="field-errors">{{ user_form.last_name.errors }}</div>
+        </div>
+
+        <div class="profile-form-group">
+            <label for="{{ user_form.username.id_for_label }}">Username</label>
+            {{ user_form.username }}
+            <div class="field-errors">{{ user_form.username.errors }}</div>
+        </div>
+
+        <div class="profile-form-group">
+            <label for="{{ user_form.email.id_for_label }}">Email</label>
+            {{ user_form.email }}
+            <div class="field-errors">{{ user_form.email.errors }}</div>
+        </div>
+
+        <div class="profile-form-group">
+            <label for="{{ profile_form.profile_picture.id_for_label }}">
+                Change Profile Picture
+            </label>
+
+            {{ profile_form.profile_picture }}
+            <div class="field-errors">
+                {{ profile_form.profile_picture.errors }}
+            </div>
+        </div>
+
+        {% if user_form.non_field_errors %}
+            <div class="field-errors">
+                {{ user_form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% if profile_form.non_field_errors %}
+            <div class="field-errors">
+                {{ profile_form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <button type="submit" class="profile-save-btn">
+            Save Changes
+        </button>
+
+    </form>
+
+    <a href="{% url 'blogs' %}" class="profile-back">
+        ← Back to Home
+    </a>
+
+</main>
+
+<footer>
+    <p>&copy; 2026 MyBlog. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
