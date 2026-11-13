@@ -3,7 +3,6 @@
 <html>
 <head>
     <title>My Blog</title>
-
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 
@@ -48,12 +47,12 @@
             <div class="profile-section">
                 <a href="{% url 'edit_profile' %}" class="profile-link">
             <div class="profile-icon">
-                {% if user.profile.profile_picture %}
-                    <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
-                {% else %}
-                    <img src="{% static 'images/profile.png' %}" alt="Profile">
-                {% endif %}
-            </div>
+                    {% if user.profile.profile_picture and user.profile.profile_picture.name != 'profile_pictures/default.png' %}
+                        <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
+                    {% else %}
+                        <img src="{% static 'images/profile.png' %}" alt="Profile">
+                    {% endif %}
+                </div>
 
             <span class="profile-name">
                     {{user.get_full_name|default:user.username}}

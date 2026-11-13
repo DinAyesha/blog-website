@@ -2,8 +2,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - MyBlog</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
@@ -15,15 +13,9 @@
 
     <nav class="nav-links">
         <ul>
-            <li>
-                <a href="{% url 'blogs' %}">Home</a>
-            </li>
-            <li>
-                <a href="{% url 'about' %}">About</a>
-            </li>
-            <li>
-                <a href="{% url 'blog' %}">Blog</a>
-            </li>
+            <li><a href="{% url 'blogs' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'blog' %}">Blog</a></li>
 
             {% if user.is_authenticated and not user.is_staff %}
             <li><a href="{% url 'my_blog' %}">My Blog</a></li>
@@ -38,7 +30,7 @@
 
             <a href="{% url 'edit_profile' %}" class="profile-link">
                 <div class="profile-icon">
-                    {% if user.profile.profile_picture %}
+                    {% if user.profile.profile_picture and user.profile.profile_picture.name != 'profile_pictures/default.png' %}
                         <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
                     {% else %}
                         <img src="{% static 'images/profile.png' %}" alt="Profile">
@@ -72,16 +64,15 @@
 
     <div class="current-profile">
 
-        {% if profile_form.instance.profile_picture %}
-            <img src="{{ profile_form.instance.profile_picture.url }}"
-                 alt="Current Profile Picture">
+        {% if user.profile.profile_picture and user.profile.profile_picture.name != 'profile_pictures/default.png' %}
+            <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
         {% else %}
-            <img src="{% static 'images/profile.png' %}"
-                 alt="Default Profile Picture">
+            <img src="{% static 'images/profile.png' %}" alt="Profile">
         {% endif %}
 
     </div>
 
+    <!-- Profile Information Form -->
     <form method="POST" enctype="multipart/form-data">
 
         {% csrf_token %}
@@ -109,6 +100,24 @@
             {{ user_form.email }}
             <div class="field-errors">{{ user_form.email.errors }}</div>
         </div>
+
+        
+        <div class="profile-form-group">
+            <label for="new_password">New Password</label>
+            <input type="password"
+                  name="new_password"
+                  id="new_password"
+                  placeholder="Enter new password">
+        </div>
+
+        <div class="profile-form-group">
+           <label for="confirm_password">Confirm Password</label>
+           <input type="password"
+                  name="confirm_password"
+                  id="confirm_password"
+                  placeholder="Confirm new password">
+        </div>
+
 
         <div class="profile-form-group">
             <label for="{{ profile_form.profile_picture.id_for_label }}">
@@ -138,7 +147,6 @@
         </button>
 
     </form>
-
     <a href="{% url 'blogs' %}" class="profile-back">
         ← Back to Home
     </a>

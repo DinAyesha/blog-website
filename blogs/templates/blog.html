@@ -2,8 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Blog - MyBlog</title>
+    <title>My Blog - MyBlog</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 
@@ -15,243 +14,162 @@
 
         <nav class="nav-links">
             <ul>
-                <li>
-                    <a href="{% url 'blogs' %}">Home</a>
-                </li>
-                <li>
-                    <a href="{% url 'about' %}#about">About</a>
-                </li>
-                <li>
-                    <a href="{% url 'blog' %}" class="active">Blog</a>
-                </li>
-                <li>
-                    <a href="{% url 'contact' %}#contact">Contact</a>
-                </li>
-
-            {% if user.is_authenticated and not user.is_staff %}
-               <li>
-                    <a href="{% url 'my_blog' %}">My Blog</a>
-               </li>
-            {% endif %}
+                <li><a href="{% url 'blogs' %}">Home</a></li>
+                <li><a href="{% url 'about' %}#about">About</a></li>
+                <li><a href="{% url 'blog' %}">Blog</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                <li><a href="{% url 'my_blog' %}" class="active">My Blog</a></li>
             </ul>
         </nav>
 
         <div class="buttons">
-            {% if user.is_authenticated %}
-                <div class="profile-section">
+            <div class="profile-section">
+
                 <a href="{% url 'edit_profile' %}" class="profile-link">
-            <div class="profile-icon">
-                {% if user.profile.profile_picture %}
-                    <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
-                {% else %}
-                    <img src="{% static 'images/profile.png' %}" alt="Profile">
-                {% endif %}
+                    <div class="profile-icon">
+                        {% if user.profile.profile_picture and user.profile.profile_picture.name != 'profile_pictures/default.png' %}
+                            <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
+                        {% else %}
+                            <img src="{% static 'images/profile.png' %}" alt="Profile">
+                        {% endif %}
+                    </div>
+
+                    <span class="profile-name">
+                        {{ user.get_full_name|default:user.username }}
+                    </span>
+                </a>
+
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn logout">Logout</button>
+                </form>
+
             </div>
-
-            <span class="profile-name">
-                    {{user.get_full_name|default:user.username}}
-            </span>
-
-        </a>
-
-        <form method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-                <button type="submit" class="btn logout">
-                    Logout
-                </button>
-        </form>
-
-        </div>
-
-            {% else %}
-               <a href="{% url 'login' %}" class="btn login">Login</a>
-               <a href="{% url 'signup' %}" class="btn signup">Sign Up</a>
-            {% endif %}
         </div>
     </header>
 
-    <!-- Blog Introduction -->
+
+    <!-- My Blog Introduction -->
     <section class="blog-intro">
-        <h1>Explore Blogs</h1>
-        <p>Read stories, share your ideas and discover something new.</p>
+        <h1>My Blog</h1>
+        <p>Manage and explore the blog posts you have shared.</p>
     </section>
 
-    <!-- Blog Content -->
-    <main class="blog-container">
 
-        <!-- Search and New Blog -->
+    <!-- My Blog Main Content -->
+    <main class="my-blog-container">
+
+        <!-- Search -->
         <div class="blog-top">
-            <form method="GET" action="{% url 'blog' %}" class="blog-search">
-                <input 
-                type="text" 
-                name="search" 
-                placeholder="Search blogs..." 
-                value="{{ search_query }}"
+            <form method="GET" action="{% url 'my_blog' %}" class="blog-search">
+
+                <input
+                    type="text"
+                    name="search"
+                    placeholder="Search blogs..."
+                    value="{{ search_query }}"
                 >
 
-                {% if selected_category %}
-                <input 
-                type="hidden" 
-                name="category" 
-                value="{{ selected_category.id }}"
-                >
-                {% endif %}
                 <button type="submit">Search</button>
-            </form>
 
-            {% if user.is_authenticated and not user.is_staff %}
-            <a href="{% url 'create_blog' %}" class="new-blog-btn">+ New Blog</a>
-            {% endif %}
+            </form>
         </div>
 
-        <!-- Blog Categories -->
-        <section class="blog-category-section">
-            <h2>Categories</h2>
 
-            <div class="category-list">
-                <a href="{% url 'blog' %}" 
-                class="category-link {% if not selected_category %}active{% endif %}">
-                 All Posts
-                </a>
+        <!-- My Posts Heading -->
+        <div class="blog-top">
+            <h2>My Posts</h2>
+        </div>
 
-                {% for category in categories %}
-                   <a href="{% url 'blog' %}?category={{ category.id }}" 
-                    class="category-link {% if selected_category.id == category.id %}active{% endif %}">
-                    {{ category.name }}
-                </a>
 
-                {% empty %}
-                   <span>No categories available.</span>
-                {% endfor %}
-                
-            </div>
-        </section>
+        <!-- My Blog Posts -->
+        <section class="latest-blogs" id="my-posts">
 
-        <!-- All Blog Posts -->
-        <section class="latest-blogs" id="all-posts">
-            <h2>Latest Posts</h2>
             <p class="blog-subtitle">
-                Stories and ideas shared by our community.
+                Here are all the blog posts you have created.
             </p>
 
             <div class="blog-posts">
 
-                <!-- Blog post -->
                 {% for post in posts %}
-                <article class="blog-card">
-                  {% if post.image %}
-                      <img src="{{ post.image.url }}"
-                      alt="{{ post.title }}"
-                      class="blog-image">
-                 {% elif post.category %}
-                    {% if post.category.name == "Daily Life" %}
-                    <img src="{% static 'images/alone .jpeg' %}"
-                         alt="Daily life blog"
-                         class="blog-image">
 
-                    {% elif post.category.name == "Technology" %}
-                    <img src="{% static 'images/tech.jpeg' %}"
-                         alt="Technology blog"
-                         class="blog-image">
+                    <article class="blog-card">
 
-                   {% elif post.category.name == "Food & Recipes" %}
-                    <img src="{% static 'images/breakfast.jpeg' %}"
-                         alt="Food and recipes blog"
-                         class="blog-image">
+                        <!-- Blog Image -->
+                        {% if post.image %}
 
-                    {% elif post.category.name == "Travel" %}
-                    <img src="{% static 'images/travel.jpeg' %}"
-                         alt="Travel blog"
-                         class="blog-image">
+                            <img
+                                src="{{ post.image.url }}"
+                                alt="{{ post.title }}"
+                                class="blog-image"
+                            >
 
-                    {% elif post.category.name == "Education" %}
-                    <img src="{% static 'images/education.jpeg' %}"
-                         alt="Education blog"
-                         class="blog-image">
+                        {% elif post.category %}
 
-                    {% else %}
-                    <img src="{% static 'images/alone .jpeg' %}"
-                         alt="Blog"
-                         class="blog-image">
-                    {% endif %}
+                            {% if post.category.name == "Daily Life" %}
+                                <img src="{% static 'images/alone .jpeg' %}" alt="Daily life blog" class="blog-image">
 
-                    {% else %}
-                    <img src="{% static 'images/alone .jpeg' %}"
-                         alt="Blog"
-                         class="blog-image">
-                    {% endif %}
+                            {% elif post.category.name == "Technology" %}
+                                <img src="{% static 'images/tech.jpeg' %}" alt="Technology blog" class="blog-image">
 
-                    <span class="blog-tag">
-                        {{ post.category.name|default:"Uncategorized" }}
-                    </span>
+                            {% elif post.category.name == "Food & Recipes" %}
+                                <img src="{% static 'images/breakfast.jpeg' %}" alt="Food and recipes blog" class="blog-image">
 
-                    <h3>{{ post.title }}</h3>
+                            {% elif post.category.name == "Travel" %}
+                                <img src="{% static 'images/travel.jpeg' %}" alt="Travel blog" class="blog-image">
 
-                    <p class="blog-description">
-                        {{ post.content|truncatewords:20 }}
-                    </p>
+                            {% elif post.category.name == "Education" %}
+                                <img src="{% static 'images/education.jpeg' %}" alt="Education blog" class="blog-image">
 
-                    <a href="{% url 'blog_detail' post.id %}?next={{ request.path|urlencode }}"
-                       class="read-more">
-                        Read More &rarr;
-                    </a>
-                    
-                {% if user.is_authenticated %}
+                            {% else %}
+                                <img src="{% static 'images/alone .jpeg' %}" alt="Blog" class="blog-image">
+                            {% endif %}
 
-                {% if user.is_staff %}
+                        {% else %}
 
-                     <div class="blog-actions">
-                       <form method="POST"
-                          action="{% url 'delete_blog' post.id %}"
-                          onsubmit="return confirm('Are you sure you want to delete this blog?');">
+                            <img src="{% static 'images/alone .jpeg' %}" alt="Blog" class="blog-image">
 
-                {% csrf_token %}
+                        {% endif %}
 
-                        <button type="submit" class="delete-blog-btn">
-                           Delete Blog
-                        </button>
 
-                    </form>
-                </div>
+                        <!-- Blog Category -->
+                        <span class="blog-tag">
+                            {{ post.category.name|default:"Uncategorized" }}
+                        </span>
 
-                {% elif post.author_id == user.id %}
 
-                     <div class="blog-actions">
+                        <!-- Blog Title -->
+                        <h3>{{ post.title }}</h3>
 
-                        <a href="{% url 'edit_blog' post.id %}"
-                           class="edit-blog-btn">
-                           Edit Blog
+
+                        <!-- Blog Description -->
+                        <p class="blog-description">
+                            {{ post.content|truncatewords:20 }}
+                        </p>
+
+
+                        <!-- Read More -->
+                        <a
+                            href="{% url 'blog_detail' post.id %}?next={{ request.path|urlencode }}"
+                            class="read-more"
+                        >
+                            Read More &rarr;
                         </a>
 
-                        <form method="POST"
-                           action="{% url 'delete_blog' post.id %}"
-                           onsubmit="return confirm('Are you sure you want to delete this blog?');">
+                    </article>
 
-                {% csrf_token %}
+                {% empty %}
 
-                        <button type="submit" class="delete-blog-btn">
-                            Delete Blog
-                        </button>
+                    <p>You haven't created any blog posts yet.</p>
 
-                      </form>
-
-                     </div>
-
-                {% endif %}
-
-                {% endif %}
-
-              </article>             
-
-            {% empty %}
-                <p>No published blog available yet.</p>
-            {% endfor %}
-
+                {% endfor %}
 
             </div>
+
         </section>
 
     </main>
+
 
     <!-- Footer -->
     <footer>

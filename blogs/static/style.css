@@ -551,12 +551,38 @@ footer p {
     margin-top: 5px;
 }
 
+
+/* Success and Error Messages */
+
 .message {
-    padding: 10px;
+    padding: 12px 15px;
     margin-bottom: 15px;
     border-radius: 5px;
-    background: #e8f5e9;
+    font-size: 14px;
+}
+
+.message.success {
+    background-color: #e8f5e9;
     color: #256029;
+    border: 1px solid #a5d6a7;
+}
+
+.message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.message.warning {
+    background-color: #fff8e1;
+    color: #8d6e00;
+    border: 1px solid #ffe082;
+}
+
+.message.info {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #90caf9;
 }
 
 
@@ -754,7 +780,14 @@ footer {
 footer p {
     font-size: 12px;
 }
+/* My Blog Page */
 
+.my-blog-container {
+    padding: 25px 6%;
+    background-color: white;
+    box-sizing: border-box;
+    min-height: 450px;
+}
 
 /* Create Blog Page */
 

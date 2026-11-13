@@ -7,6 +7,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth import logout
 from .models import BlogPost, Category
 from .models import Category, BlogPost, UserProfile
@@ -185,6 +186,37 @@ def edit_profile(request):
     }
 
     return render(request, 'edit_profile.html', context)
+
+@login_required
+def change_password(request):
+
+    if request.method != 'POST':
+        return redirect('edit_profile')
+
+    new_password = request.POST.get('new_password', '')
+    confirm_password = request.POST.get('confirm_password', '')
+
+    if new_password != confirm_password:
+        messages.error(request, "New passwords do not match.")
+        return redirect('edit_profile')
+
+    try:
+        validate_password(new_password, user=request.user)
+
+    except ValidationError as errors:
+        for error in errors:
+            messages.error(request, error)
+        return redirect('edit_profile')
+
+    request.user.set_password(new_password)
+    request.user.save()
+
+    update_session_auth_hash(request, request.user)
+
+    messages.success(request, "Your password has been updated successfully!")
+
+    return redirect('edit_profile')
+
 
 
 def blog(request):
@@ -428,8 +460,18 @@ def my_blog(request):
         'author', 'category'
     ).order_by('-created_at')
 
+    search_query = request.GET.get('search', '').strip()
+
+    if search_query:
+        posts = posts.filter(
+            Q(title__icontains=search_query) |
+            Q(content__icontains=search_query) |
+            Q(category__name__icontains=search_query)
+        )
+
     context = {
         'posts': posts,
+        'search_query': search_query
     }
 
     return render(request, 'my_blog.html', context)
