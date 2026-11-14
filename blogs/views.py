@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.template import loader
+from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.core.validators import validate_email
 from django.contrib.auth.password_validation import validate_password
@@ -19,6 +20,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.utils.http import url_has_allowed_host_and_scheme
 from PIL import Image
 from PIL import UnidentifiedImageError
+from django.core.mail import send_mail
+from django.contrib import messages
 
 # Create your views here.
 def blogs(request):
@@ -37,24 +40,39 @@ def blogs(request):
 
     return render(request, 'home.html', context)
 
+
 def login(request):
+    email_error = None
+    password_error = None
+    email_value = ""
+
+    next_url = request.POST.get('next') or request.GET.get('next', '')
+
     if request.method == "POST":
         email = request.POST.get("email", "").strip().lower()
         password = request.POST.get("password", "")
 
+        email_value = email
+
         if not email:
-            messages.error(request, "Please enter your email.")
-            return render(request, "login.html")
+            email_error = "Please enter your email."
+        else:
+            try:
+                validate_email(email)
+            except ValidationError:
+                email_error = "Please enter a valid email address."
 
         if not password:
-            messages.error(request, "Please enter your password.")
-            return render(request, "login.html")
+            password_error = "Please enter your password."
 
-        try:
-            validate_email(email)
-        except ValidationError:
-            messages.error(request, "Please enter a valid email address.")
-            return render(request, "login.html")
+        if email_error or password_error:
+            context = {
+                'email_error': email_error,
+                'password_error': password_error,
+                'email_value': email_value,
+                'next_url': next_url,
+            }
+            return render(request, "login.html", context)
 
         user_obj = User.objects.filter(email__iexact=email).first()
 
@@ -68,12 +86,17 @@ def login(request):
             user = None
 
         if not user:
-            messages.error(request, "Invalid email or password")
-            return render(request, "login.html")
+            password_error = "Invalid email or password."
+
+            context = {
+                'email_error': email_error,
+                'password_error': password_error,
+                'email_value': email_value,
+                'next_url': next_url,
+            }
+            return render(request, "login.html", context)
 
         auth_login(request, user)
-
-        next_url = request.POST.get('next') or request.GET.get('next')
 
         if next_url and url_has_allowed_host_and_scheme(
             next_url,
@@ -83,80 +106,136 @@ def login(request):
 
         return redirect('blogs')
 
-    return render(request, "login.html")
+    context = {
+        'email_error': email_error,
+        'password_error': password_error,
+        'email_value': email_value,
+        'next_url': next_url,
+    }
+
+    return render(request, "login.html", context)
+
 
 def logout_view(request):
    logout(request)
 
    return redirect("blogs")
 
+
 def signup(request):
 
+    fullname_error = None
+    email_error = None
+    password_error = None
+    confirm_password_error = None
+    terms_error = None
+
+    fullname_value = ""
+    email_value = ""
+    terms_accepted = False
+
     if request.method == "POST":
-       fullname = request.POST.get("fullname", "").strip()
-       email = request.POST.get("email", "").strip().lower()
-       password = request.POST.get("password", "")
-       confirm_password = request.POST.get("confirm-password", "")
-       terms = request.POST.get("terms")
 
-       name_parts = fullname.split()
-       first_name = name_parts[0] if name_parts else ""
-       last_name = " ".join(name_parts[1:])
+        fullname = request.POST.get("fullname", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
+        confirm_password = request.POST.get("confirm-password", "")
+        terms = request.POST.get("terms")
 
-       if not fullname:
-          messages.error(request, "Please enter your full name.")
-          return render(request, "signup.html")
+        fullname_value = fullname
+        email_value = email
+        terms_accepted = terms == "yes"
 
-       if not email:
-          messages.error(request, "Please enter your email.")
-          return render(request, "signup.html")
-       try:
-          validate_email(email)
-       except ValidationError:
-          messages.error(request, "Please enter a valid email address.")
-          return render(request, "signup.html")
+        if not fullname:
+            fullname_error = "Please enter your full name."
 
-       if User.objects.filter(email__iexact=email).exists():
-          messages.error(request,"This email is already registered.")
-          return render(request, "signup.html")   
+        if not email:
+            email_error = "Please enter your email."
+        else:
+            try:
+                validate_email(email)
+            except ValidationError:
+                email_error = "Please enter a valid email address."
+            else:
+                if User.objects.filter(email__iexact=email).exists():
+                    email_error = "This email is already registered."
 
-       username=email
-       if len(username) >150 or User.objects.filter(username=username).exists():
-          messages.error(request, "This email cannot be used as a username.")
-          return render(request, "signup.html")
-       
-       if len (password) < 8:
-          messages.error(request,"Password must contain at least 8 characters.")
-          return render(request, "signup.html")
-       try:
-          validate_password(password)
-       except ValidationError as error:
-          for message in error.messages:
-             messages.error(request,message)
-             return render(request,"signup.html")
+                elif len(email) > 150 or User.objects.filter(username=email).exists():
+                    email_error = "This email cannot be used as a username."
 
-       
-       if password != confirm_password:
-          messages.error(request, "Passwords do not match.")
-          return render(request, "signup.html")
-       
-       if terms != "yes":
-          messages.error(request, "Please accept Terms and conditions.")
-          return render(request, "signup.html")
-       
-       user = User.objects.create_user(
-          username=username,
-          email=email,
-          password=password,
-          first_name=first_name,
-          last_name=last_name
+        if not password:
+            password_error = "Please enter your password."
+
+        elif len(password) < 8:
+            password_error = "Password must contain at least 8 characters."
+
+        else:
+            try:
+                validate_password(password)
+            except ValidationError as error:
+                password_error = " ".join(error.messages)
+
+        if not confirm_password:
+            confirm_password_error = "Please confirm your password."
+
+        elif password != confirm_password:
+            confirm_password_error = "Passwords do not match."
+
+        if not terms_accepted:
+            terms_error = "Please accept Terms and Conditions."
+
+        if any([
+            fullname_error,
+            email_error,
+            password_error,
+            confirm_password_error,
+            terms_error
+        ]):
+            context = {
+                'fullname_error': fullname_error,
+                'email_error': email_error,
+                'password_error': password_error,
+                'confirm_password_error': confirm_password_error,
+                'terms_error': terms_error,
+                'fullname_value': fullname_value,
+                'email_value': email_value,
+                'terms_accepted': terms_accepted,
+            }
+
+            return render(request, "signup.html", context)
+
+        name_parts = fullname.split()
+        first_name = name_parts[0]
+        last_name = " ".join(name_parts[1:])
+
+        username = email
+
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
         )
-       UserProfile.objects.create(user=user)
-    
-       messages.success(request, "Account created successfully! Please log in.")
-       return redirect("login")
 
-    return render(request, "signup.html")
+        UserProfile.objects.create(user=user)
+
+        messages.success(request, "Account created successfully! Please log in.")
+        return redirect("login")
+
+    context = {
+        'fullname_error': fullname_error,
+        'email_error': email_error,
+        'password_error': password_error,
+        'confirm_password_error': confirm_password_error,
+        'terms_error': terms_error,
+        'fullname_value': fullname_value,
+        'email_value': email_value,
+        'terms_accepted': terms_accepted,
+    }
+
+    return render(request, "signup.html", context)
+
 
 @login_required
 def edit_profile(request):
@@ -492,9 +571,68 @@ def about(request):
     return render(request, 'about.html')
 
 
-def contact(request):
-    return render(request, 'contact.html')
 
+def contact(request):
+
+    email_error = None
+    contact_message = None
+    contact_message_type = None
+
+    if request.method == 'POST':
+
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
+
+        if not name or not email or not subject or not message:
+            contact_message = "All fields are required."
+            contact_message_type = "error"
+
+        else:
+            try:
+                validate_email(email)
+
+            except ValidationError:
+                email_error = "Please enter a valid email address."
+
+            else:
+
+                email_message = f"""
+New Contact Message from MyBlog
+
+Name: {name}
+Email: {email}
+
+Message:
+{message}
+"""
+
+                try:
+                    send_mail(
+                        subject=subject,
+                        message=email_message,
+                        from_email=None,
+                        recipient_list=['test@example.com'],
+                        fail_silently=False,
+                    )
+
+                    contact_message = "Your message has been sent successfully!"
+                    contact_message_type = "success"
+
+                except Exception as e:
+                    print("EMAIL SENDING ERROR:", e)
+
+                    contact_message = "Sorry, your message could not be sent. Please try again."
+                    contact_message_type = "error"
+
+    context = {
+        'email_error': email_error,
+        'contact_message': contact_message,
+        'contact_message_type': contact_message_type,
+    }
+
+    return render(request, 'contact.html', context)
 
 @user_passes_test(lambda user: user.is_superuser, login_url='login')
 def admin_dashboard(request):

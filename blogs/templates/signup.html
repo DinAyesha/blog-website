@@ -48,13 +48,7 @@
             <p class="signup-description">
                 Join MyBlog and start sharing your stories!
             </p>
-    {% if messages %}
-        {% for message in messages %}
-           <p class="signup-message {{ message.tags }}">
-               {{ message }}
-           </p>
-        {% endfor %}
-    {% endif %}
+    
             <form action="{% url 'signup' %}" method="post" novalidate>
                 {% csrf_token %}
 
@@ -67,8 +61,12 @@
                         name="fullname"
                         placeholder="Enter your full name"
                         autocomplete="name"
+                        value="{{ fullname_value }}"
                         required
                     >
+                    {% if fullname_error %}
+                       <p class="field-error">{{ fullname_error }}</p>
+                    {% endif %}
                 </div>
 
                 <!-- Email Field -->
@@ -80,6 +78,7 @@
                         name="email"
                         placeholder="Enter your email"
                         autocomplete="email"
+                        value="{{ email_value }}"
                         required
                     >
                 {% if email_error %}
@@ -128,6 +127,7 @@
                         id="terms"
                         name="terms"
                         value="yes"
+                        {% if terms_accepted %}checked{% endif %}
                         required
                     >
 
@@ -135,6 +135,10 @@
                         I agree to the Terms and Conditions
                     </label>
                 </div>
+
+                {% if terms_error %}
+                   <p class="field-error">{{ terms_error }}</p>
+                {% endif %}
 
                 <!-- Create Account Button -->
                 <button type="submit" class="signup-submit">

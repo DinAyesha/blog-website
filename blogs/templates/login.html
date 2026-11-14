@@ -46,17 +46,10 @@
             <p class="login-description">
                 Login to continue reading and sharing stories.
             </p>
-    {% if messages %}
-        {% for message in messages %}
-            <p class="signup-message {{ message.tags }}">
-                {{ message }}
-            </p>
-        {% endfor %}
-    {% endif %}
 
             <form action="{% url 'login' %}" method="post" novalidate>
                 {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.GET.next }}">
+                <input type="hidden" name="next" value="{{ next_url }}">
 
                 <!-- Email Field -->
                 <div class="form-group">
@@ -67,6 +60,7 @@
                         name="email"
                         placeholder="Enter your email"
                         autocomplete="email"
+                        value="{{ email_value }}"
                         required
                     >
                 {% if email_error %}
@@ -85,6 +79,9 @@
                         autocomplete="current-password"
                         required
                     >
+                    {% if password_error %}
+                       <p class="field-error">{{ password_error }}</p>
+                    {% endif %}
                 </div>
 
                 <!-- Remember Me and Forgot Password -->

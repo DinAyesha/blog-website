@@ -1296,3 +1296,27 @@ footer p {
 .contact-btn:hover {
     background-color: #1f55b5;
 }
+.email-error {
+    display: block;
+    color: #dc3545;
+    font-size: 13px;
+    margin-top: 5px;
+    text-align: left;
+}
+
+.contact-message {
+    font-size: 14px;
+    text-align: left;
+    margin: 12px 20px;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+.contact-message.success {
+    color: #256029;
+}
+
+.contact-message.error {
+    color: #dc3545;
+}

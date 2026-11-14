@@ -83,7 +83,11 @@
         </div>
 
     </header>
-
+    {% if contact_message %}
+        <p class="contact-message {{ contact_message_type }}">
+            {{ contact_message }}
+        </p>
+    {% endif %}
 
     <!-- Contact Page Content -->
     <main class="contact-container">
@@ -129,8 +133,9 @@
             <div class="contact-form-section">
 
                 <h2>Send Us a Message</h2>
+                
 
-                <form method="POST" action="#">
+                <form method="POST" action="{% url 'contact' %}" novalidate>
                     {% csrf_token %}
 
                     <label for="name">Your Name</label>
@@ -153,6 +158,11 @@
                         placeholder="Enter your email"
                         required
                     >
+                    {% if email_error %}
+                        <small class="email-error">
+                            {{ email_error }}
+                        </small>
+                    {% endif %}
 
 
                     <label for="subject">Subject</label>
