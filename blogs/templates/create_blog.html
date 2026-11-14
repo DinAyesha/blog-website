@@ -11,8 +11,9 @@
     <!-- Navigation Bar -->
     <header>
 
-        <div class="logo">MyBlog</div>
-
+         <div class="logo">
+             <a href="{% url 'blogs' %}" class="logo-link">My<span>Blog</span></a>
+        </div>
         <nav class="nav-links">
             <ul>
                 <li>
@@ -145,10 +146,16 @@
                 <div class="form-group">
                     <label for="status">Publication Status</label>
 
-                    <select id="status" name="status">
-                        <option value="draft">Save as Draft</option>
-                        <option value="published">Publish Now</option>
-                    </select>
+                    <label class="status-checkbox">
+                        <input
+                        type="checkbox"
+                        id="status"
+                        name="status"
+                        value="published"
+                        checked
+                        >
+                        Publish this blog
+                    </label>
                 </div>
 
 

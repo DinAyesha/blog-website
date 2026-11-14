@@ -10,15 +10,29 @@
 
     <!-- Navigation Bar -->
     <header>
-        <div class="logo">MyBlog</div>
+         <div class="logo">
+             <a href="{% url 'blogs' %}" class="logo-link">My<span>Blog</span></a>
+        </div>
 
         <nav class="nav-links">
             <ul>
-                <li><a href="{% url 'blogs' %}">Home</a></li>
-                <li><a href="{% url 'about' %}#about">About</a></li>
-                <li><a href="{% url 'blog' %}">Blog</a></li>
-                <li><a href="{% url 'contact' %}">Contact</a></li>
-                <li><a href="{% url 'my_blog' %}" class="active">My Blog</a></li>
+                <li>
+                    <a href="{% url 'blogs' %}">Home</a>
+                </li>
+                <li>
+                    <a href="{% url 'about' %}#about">About</a>
+                </li>
+                <li>
+                    <a href="{% url 'blog' %}">Blog</a>
+                </li>
+                <li>
+                    <a href="{% url 'contact' %}">Contact</a>
+                </li>
+                {% if not user.is_superuser %}
+                <li>
+                   <a href="{% url 'my_blog' %}" class="active">My Blog</a>
+                </li>
+                {% endif %}
             </ul>
         </nav>
 

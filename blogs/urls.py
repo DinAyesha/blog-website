@@ -16,5 +16,7 @@ urlpatterns = [
     path('my-blog/', views.my_blog, name='my_blog'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-dashboard/blogs/',views.admin_manage_blogs,name='admin_manage_blogs'),
 
 ]

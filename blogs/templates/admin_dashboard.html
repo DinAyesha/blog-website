@@ -1,0 +1,235 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - MyBlog</title>
+
+    <link rel="stylesheet" href="{% static 'admin_style.css' %}">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+
+        <div class="admin-logo">
+            <h2>MyBlog</h2>
+            <span>ADMIN PANEL</span>
+        </div>
+
+        <div class="sidebar-menu">
+
+            <p class="menu-heading">MAIN MENU</p>
+
+            <a href="{% url 'admin_dashboard' %}" class="menu-link active">
+                <img src="{% static 'images/data.png' %}"
+                alt="Dashboard"
+                class="menu-icon"
+                >
+                Dashboard
+            </a>
+
+            <p class="menu-heading">MANAGEMENT</p>
+
+            <span class="menu-link disabled">
+                <img src="{% static 'images/group.png' %}"
+                alt="Manage Users"
+                class="menu-icon"
+                >
+                Manage Users
+                <small>Coming soon</small>
+            </span>
+
+            <span class="menu-link disabled">
+                <img src="{% static 'images/blog.png' %}"
+                alt="Manage Blogs"
+                class="menu-icon"
+                >
+                Manage Blogs
+                <small>Coming soon</small>
+            </span>
+
+            <span class="menu-link disabled">
+                <img src="{% static 'images/list.png'}"
+                alt="Manage Categories"
+                class="menu-icon"
+                >
+                Manage Categories
+                <small>Coming soon</small>
+            </span>
+
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="{% url 'blogs' %}" class="website-link">
+                ← Back to Website
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="admin-main">
+
+        <!-- Top Header -->
+        <header class="admin-header">
+
+            <div>
+                <h2>Dashboard</h2>
+                <p>Welcome to your MyBlog administration panel.</p>
+            </div>
+
+            <div class="admin-account">
+                <div class="admin-avatar">
+                    {{ request.user.username|first|upper }}
+                </div>
+
+                <div class="admin-account-info">
+                    <strong>{{ request.user.username }}</strong>
+                    <span>Super Administrator</span>
+                </div>
+
+                <a href="{% url 'logout' %}" class="admin-logout">
+                    Logout
+                </a>
+            </div>
+
+        </header>
+
+
+        <!-- Dashboard Content -->
+        <section class="dashboard-content">
+
+            <div class="welcome-section">
+                <h1>Welcome back, {{ request.user.first_name|default:request.user.username }}!</h1>
+                <p>Here is an overview of your website activity.</p>
+            </div>
+
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon users-icon">♙</div>
+                    <div>
+                        <p>Total Users</p>
+                        <h2>{{ total_users }}</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon blogs-icon">▤</div>
+                    <div>
+                        <p>Total Blogs</p>
+                        <h2>{{ total_blogs }}</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon categories-icon">▧</div>
+                    <div>
+                        <p>Categories</p>
+                        <h2>{{ total_categories }}</h2>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon published-icon">✓</div>
+                    <div>
+                        <p>Published Blogs</p>
+                        <h2>{{ published_blogs }}</h2>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Recent Posts -->
+            <div class="recent-posts-section">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Recent Blog Posts</h2>
+                        <p>Latest posts submitted by your bloggers.</p>
+                    </div>
+                </div>
+
+
+                <div class="table-container">
+
+                    <table class="admin-table">
+
+                        <thead>
+                            <tr>
+                                <th>Blog Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for post in recent_posts %}
+
+                            <tr>
+                                <td class="post-title">
+                                    {{ post.title }}
+                                </td>
+
+                                <td>{{ post.author.username }}</td>
+
+                                <td>
+                                    {% if post.category %}
+                                        {{ post.category.name }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <span class="status-badge {{ post.status }}">
+                                        {{ post.status|title }}
+                                    </span>
+                                </td>
+
+                                <td>{{ post.created_at|date:"d M Y" }}</td>
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="5" class="empty-message">
+                                    No blog posts found.
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="admin-footer">
+            © 2026 MyBlog. All rights reserved.
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

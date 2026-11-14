@@ -15,6 +15,8 @@ from .forms import UserUpdateForm, UserProfileForm
 from .models import UserProfile
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
+from django.utils.http import url_has_allowed_host_and_scheme
 from PIL import Image
 from PIL import UnidentifiedImageError
 
@@ -37,39 +39,51 @@ def blogs(request):
 
 def login(request):
     if request.method == "POST":
-       email = request.POST.get("email", "").strip().lower()
-       password = request.POST.get("password", "")
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
 
-       if not email:
-          messages.error(request,"Please enter your email.")
-          return render(request,"login.html")
-       if not password:
-          messages.error(request,"Please enter your password.")
-          return render(request,"login.html")
-       try:
-          validate_email(email)
-       except ValidationError as error:
-          messages.error(request,"Please enter a valid email address.")
-          return render(request,"login.html")
-       
-       user_obj = User.objects.filter(email__iexact=email).first()
-       if user_obj:
-        user = authenticate(
-                 request,
-                 username=user_obj.username,
-                 password=password
-              )
-       else:
-          user = None
-       if not user:
-          messages.error(request, "Invalid email or password")
-          return render(request,"login.html")
-       
-       auth_login(request,user)
-       messages.success(request,"Login successful!")
-       return redirect("blogs")
-    
-    return render(request,"login.html")
+        if not email:
+            messages.error(request, "Please enter your email.")
+            return render(request, "login.html")
+
+        if not password:
+            messages.error(request, "Please enter your password.")
+            return render(request, "login.html")
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, "Please enter a valid email address.")
+            return render(request, "login.html")
+
+        user_obj = User.objects.filter(email__iexact=email).first()
+
+        if user_obj:
+            user = authenticate(
+                request,
+                username=user_obj.username,
+                password=password
+            )
+        else:
+            user = None
+
+        if not user:
+            messages.error(request, "Invalid email or password")
+            return render(request, "login.html")
+
+        auth_login(request, user)
+
+        next_url = request.POST.get('next') or request.GET.get('next')
+
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={request.get_host()}
+        ):
+            return redirect(next_url)
+
+        return redirect('blogs')
+
+    return render(request, "login.html")
 
 def logout_view(request):
    logout(request)
@@ -286,13 +300,10 @@ def create_blog(request):
         category_id = request.POST.get('category')
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
-        status = request.POST.get('status', 'draft')
+        status = 'published' if request.POST.get('status') == 'published' else 'draft'
 
         if not title or not content:
             messages.error(request, "Title and Content are required.")
-
-        elif status not in ['draft', 'published']:
-            messages.error(request, "Invalid blog status.")
 
         else:
             category = None
@@ -483,3 +494,46 @@ def about(request):
 
 def contact(request):
     return render(request, 'contact.html')
+
+
+@user_passes_test(lambda user: user.is_superuser, login_url='login')
+def admin_dashboard(request):
+
+    total_users = User.objects.count()
+
+    total_blogs = BlogPost.objects.count()
+
+    total_categories = Category.objects.count()
+
+    published_blogs = BlogPost.objects.filter(
+        status='published'
+    ).count()
+
+    recent_posts = BlogPost.objects.select_related(
+        'author', 'category'
+    ).order_by('-created_at')[:5]
+
+    context = {
+        'total_users': total_users,
+        'total_blogs': total_blogs,
+        'total_categories': total_categories,
+        'published_blogs': published_blogs,
+        'recent_posts': recent_posts,
+    }
+
+    return render(request, 'admin_dashboard.html', context)
+@user_passes_test(
+    lambda user: user.is_superuser,
+    login_url='login'
+)
+def admin_manage_blogs(request):
+
+    posts = BlogPost.objects.select_related(
+        'author', 'category'
+    ).order_by('-created_at')
+
+    context = {
+        'posts': posts,
+    }
+
+    return render(request, 'admin_manage_blogs.html', context)
