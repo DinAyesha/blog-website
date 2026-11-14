@@ -1,0 +1,249 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Blogs - MyBlog</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="{% static 'admin_style.css' %}">
+</head>
+
+<body>
+
+<div class="admin-layout">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+
+        <div class="sidebar-top">
+            <div class="logo">
+                <a href="{% url 'admin_dashboard' %}" class="logo-link">
+                    My<span>Blog</span>
+                </a>
+            </div>
+
+            <button type="button" class="sidebar-toggle" id="sidebarToggle">
+                <img src="{% static 'images/menu.png' %}" alt="Toggle Sidebar">
+            </button>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <p class="menu-heading">MAIN MENU</p>
+
+            <a href="{% url 'admin_dashboard' %}" class="menu-link">
+                <img src="{% static 'images/data.png' %}" alt="Dashboard" class="menu-icon">
+                <span>Dashboard</span>
+            </a>
+
+            <p class="menu-heading">MANAGEMENT</p>
+
+            <a href="{% url 'admin_manage_users' %}" class="menu-link">
+                <img src="{% static 'images/group.png' %}" alt="Manage Users" class="menu-icon">
+                <span>Manage Users</span>
+            </a>
+
+            <a href="{% url 'admin_manage_blogs' %}" class="menu-link active">
+                <img src="{% static 'images/blog.png' %}" alt="Manage Blogs" class="menu-icon">
+                <span>Manage Blogs</span>
+            </a>
+
+            <a href="{% url 'admin_manage_categories' %}" class="menu-link">
+                <img src="{% static 'images/list.png' %}" alt="Manage Categories" class="menu-icon">
+                <span>Manage Categories</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <a href="{% url 'admin_dashboard' %}" class="website-link">
+                ← Back to Dashboard
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="admin-main">
+
+        <!-- Header -->
+        <header class="admin-header">
+
+            <div class="header-title">
+                <h2>Manage Blogs</h2>
+                <p>View and manage all blog posts.</p>
+            </div>
+
+            <div class="admin-account">
+
+                <a href="{% url 'edit_profile' %}" class="admin-profile-link">
+
+                    <div class="admin-avatar">
+                        {% if request.user.profile.profile_picture and request.user.profile.profile_picture.name != 'profile_pictures/default.png' %}
+                            <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile">
+                        {% else %}
+                            <img src="{% static 'images/profile.png' %}" alt="Profile">
+                        {% endif %}
+                    </div>
+
+                    <div class="admin-account-info">
+                        <strong>{{ request.user.get_full_name|default:request.user.username }}</strong>
+                        <span>Super Administrator</span>
+                    </div>
+
+                </a>
+
+                <form method="POST" action="{% url 'logout' %}" class="admin-logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn logout admin-logout">Logout</button>
+                </form>
+
+            </div>
+
+        </header>
+
+
+        <!-- Page Content -->
+        <section class="dashboard-content">
+
+            <div class="welcome-section">
+                <h1>All Blog Posts</h1>
+                <p>Review blog posts submitted by registered bloggers.</p>
+            </div>
+
+
+            <!-- Messages -->
+            {% if messages %}
+                <div class="admin-messages">
+                    {% for message in messages %}
+                        <div class="admin-message {{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+
+            <!-- Blogs Table -->
+            <div class="recent-posts-section">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Blog Posts</h2>
+                        <p>Total blog posts: {{ posts|length }}</p>
+                    </div>
+                </div>
+
+                <div class="table-container">
+
+                    <table class="admin-table">
+
+                        <thead>
+                            <tr>
+                                <th>Blog Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for post in posts %}
+
+                            <tr>
+
+                                <td class="post-title">
+                                    <a href="{% url 'blog_detail' post.id %}?next={% url 'admin_dashboard' %}"
+                                       class="admin-post-link">
+                                       {{ post.title }}
+                                    </a>
+                                </td>
+
+                                <td>
+                                    {{ post.author.username }}
+                                </td>
+
+                                <td>
+                                    {% if post.category %}
+                                        {{ post.category.name }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <span class="status-badge {{ post.status }}">
+                                        {{ post.status|title }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    {{ post.created_at|date:"d M Y" }}
+                                </td>
+
+                                <td>
+
+                                    <form method="POST"
+                                          action="{% url 'admin_manage_blogs' %}"
+                                          onsubmit="return confirm('Are you sure you want to delete this blog post?');">
+
+                                        {% csrf_token %}
+
+                                        <input type="hidden" name="post_id" value="{{ post.id }}">
+                                        <input type="hidden" name="action" value="delete">
+
+                                        <button type="submit" class="action-btn delete-btn">
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+                                <td colspan="6" class="empty-message">
+                                    No blog posts found.
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer class="admin-footer">
+            © 2026 MyBlog. All rights reserved.
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script>
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const adminLayout = document.querySelector('.admin-layout');
+
+    sidebarToggle.addEventListener('click', function () {
+        adminLayout.classList.toggle('sidebar-collapsed');
+    });
+</script>
+
+</body>
+</html>

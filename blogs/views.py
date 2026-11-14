@@ -770,11 +770,88 @@ def admin_dashboard(request):
     }
 
     return render(request, 'admin_dashboard.html', context)
+
+
+@user_passes_test(
+    lambda user: user.is_superuser,
+    login_url='login'
+)
+def admin_manage_users(request):
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        user_id = request.POST.get('user_id')
+
+        if not user_id:
+            messages.error(request, "User ID is missing.")
+            return redirect('admin_manage_users')
+
+        target_user = get_object_or_404(User, pk=user_id)
+
+        # Admin cannot manage their own account from this page.
+        if target_user.pk == request.user.pk:
+            messages.error(request, "You cannot manage your own account here.")
+            return redirect('admin_manage_users')
+
+        # Protect superuser accounts.
+        if target_user.is_superuser:
+            messages.error(request, "Superuser accounts cannot be changed here.")
+            return redirect('admin_manage_users')
+
+        if action == 'activate':
+            target_user.is_active = True
+            target_user.save()
+            messages.success(request, "User activated successfully.")
+
+        elif action == 'deactivate':
+            target_user.is_active = False
+            target_user.save()
+            messages.success(request, "User deactivated successfully.")
+
+        elif action == 'delete':
+
+            # Do not delete users who still have blog posts.
+            if BlogPost.objects.filter(author=target_user).exists():
+                messages.error(
+                    request,
+                    "This user has blog posts. Delete or reassign those posts first."
+                )
+            else:
+                target_user.delete()
+                messages.success(request, "User deleted successfully.")
+
+        else:
+            messages.error(request, "Invalid action.")
+
+        return redirect('admin_manage_users')
+
+    users = User.objects.all().order_by('-date_joined')
+
+    context = {
+        'users': users,
+    }
+
+    return render(request, 'admin_manage_users.html', context)
+
 @user_passes_test(
     lambda user: user.is_superuser,
     login_url='login'
 )
 def admin_manage_blogs(request):
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        post_id = request.POST.get('post_id')
+
+        if action == 'delete' and post_id:
+            post = get_object_or_404(BlogPost, pk=post_id)
+            post.delete()
+            messages.success(request, "Blog post deleted successfully.")
+
+        else:
+            messages.error(request, "Invalid request.")
+
+        return redirect('admin_manage_blogs')
 
     posts = BlogPost.objects.select_related(
         'author', 'category'
@@ -785,3 +862,85 @@ def admin_manage_blogs(request):
     }
 
     return render(request, 'admin_manage_blogs.html', context)
+
+
+@user_passes_test(
+    lambda user: user.is_superuser,
+    login_url='login'
+)
+def admin_manage_categories(request):
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        category_id = request.POST.get('category_id')
+
+        if action == 'add':
+            name = request.POST.get('name', '').strip()
+            description = request.POST.get('description', '').strip()
+
+            if not name:
+                messages.error(request, "Category name is required.")
+
+            elif Category.objects.filter(name__iexact=name).exists():
+                messages.error(request, "This category already exists.")
+
+            else:
+                Category.objects.create(
+                    name=name,
+                    description=description
+                )
+                messages.success(request, "Category added successfully.")
+
+        elif action == 'edit':
+            if not category_id:
+                messages.error(request, "Category ID is missing.")
+                return redirect('admin_manage_categories')
+
+            category = get_object_or_404(Category, pk=category_id)
+
+            name = request.POST.get('name', '').strip()
+            description = request.POST.get('description', '').strip()
+
+            if not name:
+                messages.error(request, "Category name is required.")
+
+            elif Category.objects.filter(
+                name__iexact=name
+            ).exclude(pk=category.pk).exists():
+                messages.error(request, "This category already exists.")
+
+            else:
+                category.name = name
+                category.description = description
+                category.save()
+                messages.success(request, "Category updated successfully.")
+
+        elif action == 'delete':
+            if not category_id:
+                messages.error(request, "Category ID is missing.")
+                return redirect('admin_manage_categories')
+
+            category = get_object_or_404(Category, pk=category_id)
+
+            # Category uses PROTECT, so prevent deletion if blogs use it.
+            if BlogPost.objects.filter(category=category).exists():
+                messages.error(
+                    request,
+                    "This category is being used by blog posts and cannot be deleted."
+                )
+            else:
+                category.delete()
+                messages.success(request, "Category deleted successfully.")
+
+        else:
+            messages.error(request, "Invalid action.")
+
+        return redirect('admin_manage_categories')
+
+    categories = Category.objects.all().order_by('name')
+
+    context = {
+        'categories': categories,
+    }
+
+    return render(request, 'admin_manage_categories.html', context)

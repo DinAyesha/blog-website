@@ -1,161 +1,323 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>Admin Dashboard - MyBlog</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{% static 'style.css' %}">
     <link rel="stylesheet" href="{% static 'admin_style.css' %}">
+
 </head>
 
 <body>
 
 <div class="admin-layout">
 
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <aside class="admin-sidebar">
 
-        <div class="admin-logo">
-            <h2>MyBlog</h2>
-            <span>ADMIN PANEL</span>
+        <!-- Sidebar Top -->
+        <div class="sidebar-top">
+
+            <div class="logo">
+                <a href="{% url 'blogs' %}" class="logo-link">
+                    My<span>Blog</span>
+                </a>
+            </div>
+
+            <!-- Sidebar Toggle Image -->
+            <button type="button"
+                    class="sidebar-toggle"
+                    id="sidebarToggle"
+                    title="Collapse Sidebar"
+                    aria-label="Toggle Sidebar">
+
+                <img src="{% static 'images/menu.png' %}"
+                     alt="Toggle Sidebar">
+
+            </button>
+
         </div>
 
-        <div class="sidebar-menu">
+
+        <!-- Sidebar Menu -->
+        <nav class="sidebar-menu">
 
             <p class="menu-heading">MAIN MENU</p>
 
-            <a href="{% url 'admin_dashboard' %}" class="menu-link active">
+            <a href="{% url 'admin_dashboard' %}"
+               class="menu-link active"
+               title="Dashboard">
+
                 <img src="{% static 'images/data.png' %}"
-                alt="Dashboard"
-                class="menu-icon"
-                >
-                Dashboard
+                     alt="Dashboard"
+                     class="menu-icon">
+
+                <span>Dashboard</span>
+
             </a>
+
 
             <p class="menu-heading">MANAGEMENT</p>
 
-            <span class="menu-link disabled">
+            <a href="{% url 'admin_manage_users' %}"
+               class="menu-link"
+               title="Manage Users">
+
                 <img src="{% static 'images/group.png' %}"
-                alt="Manage Users"
-                class="menu-icon"
-                >
-                Manage Users
-                <small>Coming soon</small>
-            </span>
+                     alt="Manage Users"
+                     class="menu-icon">
 
-            <span class="menu-link disabled">
+                <span>Manage Users</span>
+
+            </a>
+
+
+            <a href="{% url 'admin_manage_blogs' %}"
+               class="menu-link"
+               title="Manage Blogs">
+
                 <img src="{% static 'images/blog.png' %}"
-                alt="Manage Blogs"
-                class="menu-icon"
-                >
-                Manage Blogs
-                <small>Coming soon</small>
-            </span>
+                     alt="Manage Blogs"
+                     class="menu-icon">
 
-            <span class="menu-link disabled">
-                <img src="{% static 'images/list.png'}"
-                alt="Manage Categories"
-                class="menu-icon"
-                >
-                Manage Categories
-                <small>Coming soon</small>
-            </span>
+                <span>Manage Blogs</span>
 
-        </div>
+            </a>
 
+
+            <a href="{% url 'admin_manage_categories' %}"
+               class="menu-link"
+               title="Manage Categories">
+
+                <img src="{% static 'images/list.png' %}"
+                     alt="Manage Categories"
+                     class="menu-icon">
+
+                <span>Manage Categories</span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- Sidebar Bottom -->
         <div class="sidebar-bottom">
+
             <a href="{% url 'blogs' %}" class="website-link">
                 ← Back to Website
             </a>
+
         </div>
 
     </aside>
 
 
-    <!-- Main Content -->
+    <!-- MAIN CONTENT -->
     <main class="admin-main">
 
-        <!-- Top Header -->
+
+        <!-- HEADER -->
         <header class="admin-header">
 
-            <div>
+            <div class="header-title">
+
                 <h2>Dashboard</h2>
+
                 <p>Welcome to your MyBlog administration panel.</p>
+
             </div>
 
+
             <div class="admin-account">
-                <div class="admin-avatar">
-                    {{ request.user.username|first|upper }}
-                </div>
 
-                <div class="admin-account-info">
-                    <strong>{{ request.user.username }}</strong>
-                    <span>Super Administrator</span>
-                </div>
+                <!-- Admin Profile -->
+                <a href="{% url 'edit_profile' %}"
+                   class="admin-profile-link">
 
-                <a href="{% url 'logout' %}" class="admin-logout">
-                    Logout
+                    <div class="admin-avatar">
+
+                        {% if request.user.profile.profile_picture and request.user.profile.profile_picture.name != 'profile_pictures/default.png' %}
+
+                            <img src="{{ request.user.profile.profile_picture.url }}"
+                                 alt="Profile">
+
+                        {% else %}
+
+                            <img src="{% static 'images/profile.png' %}"
+                                 alt="Profile">
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="admin-account-info">
+
+                        <strong>
+                            {{ request.user.get_full_name|default:request.user.username }}
+                        </strong>
+
+                        <span>Super Administrator</span>
+
+                    </div>
+
                 </a>
+
+
+                <!-- Logout -->
+                <form method="POST"
+                      action="{% url 'logout' %}"
+                      class="admin-logout-form">
+
+                    {% csrf_token %}
+
+                    <button type="submit"
+                            class="btn logout admin-logout">
+
+                        Logout
+
+                    </button>
+
+                </form>
+
             </div>
 
         </header>
 
 
-        <!-- Dashboard Content -->
+        <!-- DASHBOARD CONTENT -->
         <section class="dashboard-content">
 
+
+            <!-- Welcome Section -->
             <div class="welcome-section">
-                <h1>Welcome back, {{ request.user.first_name|default:request.user.username }}!</h1>
+
+                <h1>
+                    Welcome back,
+                    {{ request.user.first_name|default:request.user.username }}!
+                </h1>
+
                 <p>Here is an overview of your website activity.</p>
+
             </div>
 
 
-            <!-- Statistics Cards -->
+            <!-- STATISTICS CARDS -->
             <div class="stats-grid">
 
+
+                <!-- Total Users -->
                 <div class="stat-card">
-                    <div class="stat-icon users-icon">♙</div>
-                    <div>
+
+                    <div class="stat-icon users-icon">
+
+                        <img src="{% static 'images/group.png' %}"
+                             alt="Total Users">
+
+                    </div>
+
+                    <div class="stat-info">
+
                         <p>Total Users</p>
+
                         <h2>{{ total_users }}</h2>
+
                     </div>
+
                 </div>
 
+
+                <!-- Total Blogs -->
                 <div class="stat-card">
-                    <div class="stat-icon blogs-icon">▤</div>
-                    <div>
+
+                    <div class="stat-icon blogs-icon">
+
+                        <img src="{% static 'images/blog.png' %}"
+                             alt="Total Blogs">
+
+                    </div>
+
+                    <div class="stat-info">
+
                         <p>Total Blogs</p>
+
                         <h2>{{ total_blogs }}</h2>
+
                     </div>
+
                 </div>
 
+
+                <!-- Total Categories -->
                 <div class="stat-card">
-                    <div class="stat-icon categories-icon">▧</div>
-                    <div>
+
+                    <div class="stat-icon categories-icon">
+
+                        <img src="{% static 'images/list.png' %}"
+                             alt="Categories">
+
+                    </div>
+
+                    <div class="stat-info">
+
                         <p>Categories</p>
+
                         <h2>{{ total_categories }}</h2>
+
                     </div>
+
                 </div>
 
+
+                <!-- Published Blogs -->
                 <div class="stat-card">
-                    <div class="stat-icon published-icon">✓</div>
-                    <div>
-                        <p>Published Blogs</p>
-                        <h2>{{ published_blogs }}</h2>
+
+                    <div class="stat-icon published-icon">
+
+                        <img src="{% static 'images/data.png' %}"
+                             alt="Published Blogs">
+
                     </div>
+
+                    <div class="stat-info">
+
+                        <p>Published Blogs</p>
+
+                        <h2>{{ published_blogs }}</h2>
+
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <!-- Recent Posts -->
+            <!-- RECENT POSTS -->
             <div class="recent-posts-section">
 
+
                 <div class="section-heading">
+
                     <div>
+
                         <h2>Recent Blog Posts</h2>
+
                         <p>Latest posts submitted by your bloggers.</p>
+
                     </div>
+
+
+                    <a href="{% url 'admin_manage_blogs' %}"
+                       class="view-all-link">
+
+                        View All
+
+                    </a>
+
                 </div>
 
 
@@ -164,49 +326,70 @@
                     <table class="admin-table">
 
                         <thead>
+
                             <tr>
+
                                 <th>Blog Title</th>
                                 <th>Author</th>
                                 <th>Category</th>
                                 <th>Status</th>
                                 <th>Date</th>
+
                             </tr>
+
                         </thead>
+
 
                         <tbody>
 
                             {% for post in recent_posts %}
 
                             <tr>
+
                                 <td class="post-title">
                                     {{ post.title }}
                                 </td>
 
-                                <td>{{ post.author.username }}</td>
-
                                 <td>
-                                    {% if post.category %}
-                                        {{ post.category.name }}
-                                    {% else %}
-                                        —
-                                    {% endif %}
+                                    {{ post.author.username }}
                                 </td>
 
                                 <td>
+
+                                    {% if post.category %}
+
+                                        {{ post.category.name }}
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
                                     <span class="status-badge {{ post.status }}">
                                         {{ post.status|title }}
                                     </span>
+
                                 </td>
 
-                                <td>{{ post.created_at|date:"d M Y" }}</td>
+                                <td>
+                                    {{ post.created_at|date:"d M Y" }}
+                                </td>
+
                             </tr>
 
                             {% empty %}
 
                             <tr>
+
                                 <td colspan="5" class="empty-message">
                                     No blog posts found.
                                 </td>
+
                             </tr>
 
                             {% endfor %}
@@ -222,14 +405,45 @@
         </section>
 
 
-        <!-- Footer -->
+        <!-- FOOTER -->
         <footer class="admin-footer">
+
             © 2026 MyBlog. All rights reserved.
+
         </footer>
+
 
     </main>
 
 </div>
+
+
+<!-- SIDEBAR TOGGLE JAVASCRIPT -->
+<script>
+
+    const sidebarToggle = document.getElementById('sidebarToggle');
+
+    const adminLayout = document.querySelector('.admin-layout');
+
+
+    sidebarToggle.addEventListener('click', function () {
+
+        adminLayout.classList.toggle('sidebar-collapsed');
+
+        if (adminLayout.classList.contains('sidebar-collapsed')) {
+
+            sidebarToggle.title = "Expand Sidebar";
+
+        } else {
+
+            sidebarToggle.title = "Collapse Sidebar";
+
+        }
+
+    });
+
+</script>
+
 
 </body>
 </html>

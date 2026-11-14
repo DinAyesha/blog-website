@@ -17,6 +17,8 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('admin-manage-users/',views.admin_manage_users,name='admin_manage_users'),
     path('admin-dashboard/blogs/',views.admin_manage_blogs,name='admin_manage_blogs'),
-
+    path('admin-manage-categories/',views.admin_manage_categories,name='admin_manage_categories'),
+    
 ]
