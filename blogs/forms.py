@@ -6,6 +6,13 @@ from .models import UserProfile
 
 class UserUpdateForm(forms.ModelForm):
 
+    first_name = forms.CharField(
+        required=True,
+        error_messages={
+            'required': 'Please enter your first name.'
+        }
+    )
+
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'email']

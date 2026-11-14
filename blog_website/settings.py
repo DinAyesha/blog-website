@@ -160,3 +160,4 @@ CACHES = {
         'LOCATION': 'myblog-session-cache',
     }
 }
+LOGIN_URL = 'login'

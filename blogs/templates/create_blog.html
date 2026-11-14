@@ -87,7 +87,7 @@
                 Share your thoughts and experiences with the world.
             </p>
 
-            <form method="POST" enctype="multipart/form-data" class="create-blog-form">
+            <form method="POST" enctype="multipart/form-data" class="create-blog-form" novalidate>
                 {% csrf_token %}
 
                 <div class="form-group">
@@ -98,8 +98,12 @@
                         id="title"
                         name="title"
                         placeholder="Enter your blog title"
+                        value="{{ title_value }}"
                         required
                     >
+                    {% if title_error %}
+                       <div class="field-errors">{{ title_error }}</div>
+                    {% endif %}
                 </div>
 
                 <div class="form-group">
@@ -111,6 +115,9 @@
                         name="image"
                         accept="image/*"
                     >
+                   {% if image_error %}
+                      <div class="field-errors">{{ image_error }}</div>
+                   {% endif %}
                 </div>
 
 
@@ -121,12 +128,17 @@
                         <option value="">Select a category</option>
 
                         {% for category in categories %}
-                            <option value="{{ category.id }}">
+                            <option value="{{ category.id }}"
+                                   {% if category_value == category.id|stringformat:"s" %}selected{% endif %}
+                            >
                                 {{ category.name }}
                             </option>
                         {% endfor %}
 
                     </select>
+                    {% if category_error %}
+                       <div class="field-errors">{{ category_error }}</div>
+                    {% endif %}
                 </div>
 
 
@@ -139,7 +151,10 @@
                         rows="12"
                         placeholder="Write your blog here..."
                         required
-                    ></textarea>
+                    >{{ content_value }}</textarea>
+                     {% if content_error %}
+                        <div class="field-errors">{{ content_error }}</div>
+                     {% endif %}
                 </div>
 
 
@@ -152,7 +167,7 @@
                         id="status"
                         name="status"
                         value="published"
-                        checked
+                        {% if status_published %}checked{% endif %}
                         >
                         Publish this blog
                     </label>

@@ -244,6 +244,9 @@ def edit_profile(request):
         user=request.user
     )
 
+    password_error = None
+    confirm_password_error = None
+
     if request.method == 'POST':
 
         user_form = UserUpdateForm(
@@ -257,10 +260,45 @@ def edit_profile(request):
             instance=profile
         )
 
-        if user_form.is_valid() and profile_form.is_valid():
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        if new_password:
+
+            try:
+                validate_password(new_password, request.user)
+
+            except ValidationError as error:
+                password_error = " ".join(error.messages)
+
+            if not confirm_password:
+                confirm_password_error = "Please confirm your new password."
+
+            elif new_password != confirm_password:
+                confirm_password_error = "Passwords do not match."
+
+        elif confirm_password:
+            password_error = "Please enter a new password first."
+
+        user_valid = user_form.is_valid()
+        profile_valid = profile_form.is_valid()
+        
+
+        if (
+            user_valid
+            and profile_valid
+            and not password_error
+            and not confirm_password_error
+        ):
 
             user_form.save()
             profile_form.save()
+
+            if new_password:
+                request.user.set_password(new_password)
+                request.user.save()
+
+                update_session_auth_hash(request, request.user)
 
             messages.success(
                 request,
@@ -276,10 +314,11 @@ def edit_profile(request):
     context = {
         'user_form': user_form,
         'profile_form': profile_form,
+        'password_error': password_error,
+        'confirm_password_error': confirm_password_error,
     }
 
     return render(request, 'edit_profile.html', context)
-
 @login_required
 def change_password(request):
 
@@ -289,24 +328,48 @@ def change_password(request):
     new_password = request.POST.get('new_password', '')
     confirm_password = request.POST.get('confirm_password', '')
 
-    if new_password != confirm_password:
-        messages.error(request, "New passwords do not match.")
-        return redirect('edit_profile')
+    password_error = None
+    confirm_password_error = None
 
-    try:
-        validate_password(new_password, user=request.user)
+    if not new_password:
+        password_error = "Please enter a new password."
 
-    except ValidationError as errors:
-        for error in errors:
-            messages.error(request, error)
-        return redirect('edit_profile')
+    else:
+        try:
+            validate_password(new_password, user=request.user)
+
+        except ValidationError as errors:
+            password_error = " ".join(errors.messages)
+
+    if not confirm_password:
+        confirm_password_error = "Please confirm your new password."
+
+    elif new_password != confirm_password:
+        confirm_password_error = "Passwords do not match."
+
+    if password_error or confirm_password_error:
+
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = UserProfileForm(instance=request.user.profile)
+
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'password_error': password_error,
+            'confirm_password_error': confirm_password_error,
+        }
+
+        return render(request, 'edit_profile.html', context)
 
     request.user.set_password(new_password)
     request.user.save()
 
     update_session_auth_hash(request, request.user)
 
-    messages.success(request, "Your password has been updated successfully!")
+    messages.success(
+        request,
+        "Your password has been updated successfully!"
+    )
 
     return redirect('edit_profile')
 
@@ -374,48 +437,61 @@ def create_blog(request):
 
     categories = Category.objects.all()
 
+    title_error = None
+    image_error = None
+    category_error = None
+    content_error = None
+
+    title_value = ""
+    content_value = ""
+    category_value = ""
+    status_published = True
+
     if request.method == 'POST':
+
         title = request.POST.get('title', '').strip()
         category_id = request.POST.get('category')
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
-        status = 'published' if request.POST.get('status') == 'published' else 'draft'
 
-        if not title or not content:
-            messages.error(request, "Title and Content are required.")
+        status_published = request.POST.get('status') == 'published'
+        status = 'published' if status_published else 'draft'
 
-        else:
-            category = None
+        title_value = title
+        content_value = content
+        category_value = category_id or ""
 
-            if category_id:
-                category = Category.objects.filter(
-                    id=category_id
-                ).first()
+        if not title:
+            title_error = "Please enter a blog title."
 
-                if category is None:
-                    messages.error(request, "Invalid category.")
-                    return render(
-                        request,
-                        'create_blog.html',
-                        {'categories': categories}
-                    )
+        if not content:
+            content_error = "Please enter your blog content."
 
-            if image:
-                try:
-                    img = Image.open(image)
-                    img.verify()
-                    image.seek(0)
+        category = None
 
-                except (UnidentifiedImageError, OSError, ValueError):
-                    messages.error(
-                        request,
-                        "Please upload a valid image file."
-                    )
-                    return render(
-                        request,
-                        'create_blog.html',
-                        {'categories': categories}
-                    )
+        if category_id:
+            category = Category.objects.filter(
+                id=category_id
+            ).first()
+
+            if category is None:
+                category_error = "Please select a valid category."
+
+        if image:
+            try:
+                img = Image.open(image)
+                img.verify()
+                image.seek(0)
+
+            except (UnidentifiedImageError, OSError, ValueError):
+                image_error = "Please upload a valid image file."
+
+        if not any([
+            title_error,
+            content_error,
+            category_error,
+            image_error
+        ]):
 
             BlogPost.objects.create(
                 title=title,
@@ -431,12 +507,20 @@ def create_blog(request):
 
     context = {
         'categories': categories,
+        'title_error': title_error,
+        'image_error': image_error,
+        'category_error': category_error,
+        'content_error': content_error,
+        'title_value': title_value,
+        'content_value': content_value,
+        'category_value': category_value,
+        'status_published': status_published,
     }
 
     return render(request, 'create_blog.html', context)
 
 @login_required
-def edit_blog(request, post_id):
+def edit_blog(request,post_id):
 
     if request.user.is_staff:
         return HttpResponseForbidden("Admin cannot edit blogs.")
@@ -449,72 +533,98 @@ def edit_blog(request, post_id):
 
     categories = Category.objects.all()
 
+    title_error = None
+    category_error = None
+    content_error = None
+    image_error = None
+    status_error = None
+
+    title_value = post.title
+    content_value = post.content
+    category_value = str(post.category_id or '')
+    status_value = post.status
+
     if request.method == 'POST':
 
         title = request.POST.get('title', '').strip()
-        category_id = request.POST.get('category')
+        category_id = request.POST.get('category', '')
         content = request.POST.get('content', '').strip()
         image = request.FILES.get('image')
         status = request.POST.get('status', 'draft')
 
-        if not title or not content:
-            messages.error(request, "Title and Content are required.")
+        title_value = title
+        content_value = content
+        category_value = category_id
+        status_value = status
 
-        elif status not in ['draft', 'published']:
-            messages.error(request, "Invalid blog status.")
+        if not title:
+            title_error = "Please enter a blog title."
 
-        else:
-            category = None
+        if not content:
+            content_error = "Please enter your blog content."
 
-            if category_id:
-                category = Category.objects.filter(
-                    id=category_id
-                ).first()
+        category = None
 
-                if category is None:
-                    messages.error(request, "Invalid category.")
-                    return render(
-                        request,
-                        'edit_blog.html',
-                        {
-                            'post': post,
-                            'categories': categories
-                        }
-                    )
+        if category_id:
+            category = Category.objects.filter(
+                id=category_id
+            ).first()
+
+            if category is None:
+                category_error = "Please select a valid category."
+
+        if status not in ['draft', 'published']:
+            status_error = "Invalid blog status."
+
+        if image:
+            try:
+                img = Image.open(image)
+                img.verify()
+                image.seek(0)
+
+            except (UnidentifiedImageError, OSError, ValueError):
+                image_error = "Please upload a valid image file."
+
+        if not any([
+            title_error,
+            category_error,
+            content_error,
+            image_error,
+            status_error
+        ]):
 
             post.title = title
             post.category = category
             post.content = content
             post.status = status
 
-        if image:
-            try:
-               img = Image.open(image)
-               img.verify()
-               image.seek(0)
-            except (UnidentifiedImageError, OSError, ValueError):
-               messages.error(request, "Please upload a valid image file.")
-               return render(request, 'edit_blog.html',
-                   {
-                      'post': post,
-                      'categories': categories,
-                   }                       
-                )
+            if image:
+                post.image = image
 
-            post.image = image
             post.save()
 
-            messages.success(request, "Blog updated successfully!")
+            messages.success(
+                request,
+                "Blog updated successfully!"
+            )
 
             return redirect('blog')
 
     context = {
         'post': post,
         'categories': categories,
+        'title_error': title_error,
+        'category_error': category_error,
+        'content_error': content_error,
+        'image_error': image_error,
+        'status_error': status_error,
+        'title_value': title_value,
+        'content_value': content_value,
+        'category_value': category_value,
+        'status_published': status_value == 'published',
     }
 
     return render(request, 'edit_blog.html', context)
-
 
 @login_required
 def delete_blog(request, post_id):
