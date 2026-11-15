@@ -239,6 +239,10 @@ def signup(request):
 
 @login_required
 def edit_profile(request):
+    if request.user.is_superuser:
+       back_url = 'admin_dashboard'
+    else:
+       back_url = 'blogs'
 
     profile, created = UserProfile.objects.get_or_create(
         user=request.user
@@ -316,6 +320,7 @@ def edit_profile(request):
         'profile_form': profile_form,
         'password_error': password_error,
         'confirm_password_error': confirm_password_error,
+        'back_url': back_url, 
     }
 
     return render(request, 'edit_profile.html', context)
