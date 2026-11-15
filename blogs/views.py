@@ -304,10 +304,7 @@ def edit_profile(request):
 
                 update_session_auth_hash(request, request.user)
 
-            messages.success(
-                request,
-                "Your profile has been updated successfully!"
-            )
+            messages.success(request,"Your profile has been updated successfully!")
 
             return redirect('edit_profile')
 
