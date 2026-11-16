@@ -141,6 +141,7 @@
 
                         <thead>
                             <tr>
+                                <th>Profile</th>
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Joined Date</th>
@@ -155,9 +156,18 @@
                             {% for user in users %}
 
                             <tr>
+                                <td>
+                                    <div class="user-avatar">
+                                        {% if user.profile.profile_picture and user.profile.profile_picture.name != 'profile_pictures/default.png' %}
+                                              <img src="{{ user.profile.profile_picture.url }}" alt="Profile">
+                                        {% else %}
+                                              <img src="{% static 'images/profile.png' %}" alt="Default Profile">
+                                        {% endif %}
+                                    </div>
+                                </td>
 
                                 <td class="post-title">
-                                    {{ user.username }}
+                                    {{ user.get_full_name|default:"Name not provided" }}
                                 </td>
 
                                 <td>
