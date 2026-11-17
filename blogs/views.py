@@ -22,6 +22,7 @@ from PIL import Image
 from PIL import UnidentifiedImageError
 from django.core.mail import send_mail
 from django.contrib import messages
+from .utils import send_html_email
 
 # Create your views here.
 def blogs(request):
@@ -49,18 +50,13 @@ def login(request):
     next_url = request.POST.get('next') or request.GET.get('next', '')
 
     if request.method == "POST":
-        email = request.POST.get("email", "").strip().lower()
+        identifier = request.POST.get("email", "").strip()
         password = request.POST.get("password", "")
 
-        email_value = email
+        email_value = identifier
 
-        if not email:
-            email_error = "Please enter your email."
-        else:
-            try:
-                validate_email(email)
-            except ValidationError:
-                email_error = "Please enter a valid email address."
+        if not identifier:
+            email_error = "Please enter your username or email."
 
         if not password:
             password_error = "Please enter your password."
@@ -74,7 +70,29 @@ def login(request):
             }
             return render(request, "login.html", context)
 
-        user_obj = User.objects.filter(email__iexact=email).first()
+     
+        if '@' in identifier:
+            user_obj = User.objects.filter(
+                email__iexact=identifier
+            ).first()
+        else:
+            user_obj = User.objects.filter(
+                username__iexact=identifier
+            ).first()
+
+        if user_obj and not user_obj.is_active:
+            email_error = (
+                "This account is deactivated. "
+                "Please contact the administrator."
+            )
+
+            context = {
+                'email_error': email_error,
+                'password_error': password_error,
+                'email_value': email_value,
+                'next_url': next_url,
+            }
+            return render(request, "login.html", context)
 
         if user_obj:
             user = authenticate(
@@ -86,7 +104,7 @@ def login(request):
             user = None
 
         if not user:
-            password_error = "Invalid email or password."
+            password_error = "Invalid username/email or password."
 
             context = {
                 'email_error': email_error,
@@ -115,12 +133,10 @@ def login(request):
 
     return render(request, "login.html", context)
 
-
 def logout_view(request):
    logout(request)
 
    return redirect("blogs")
-
 
 def signup(request):
 
@@ -146,22 +162,29 @@ def signup(request):
         email_value = email
         terms_accepted = terms == "yes"
 
+        fullname = " ".join(fullname.split())
+
         if not fullname:
             fullname_error = "Please enter your full name."
 
+        elif len(fullname) > 150:
+            fullname_error = "Full name cannot exceed 150 characters."
+
+        elif User.objects.filter(username__iexact=fullname).exists():
+            fullname_error = "This name is already registered. Please use another name."
+
         if not email:
             email_error = "Please enter your email."
+
         else:
             try:
                 validate_email(email)
             except ValidationError:
                 email_error = "Please enter a valid email address."
+
             else:
                 if User.objects.filter(email__iexact=email).exists():
                     email_error = "This email is already registered."
-
-                elif len(email) > 150 or User.objects.filter(username=email).exists():
-                    email_error = "This email cannot be used as a username."
 
         if not password:
             password_error = "Please enter your password."
@@ -191,13 +214,14 @@ def signup(request):
             confirm_password_error,
             terms_error
         ]):
+
             context = {
                 'fullname_error': fullname_error,
                 'email_error': email_error,
                 'password_error': password_error,
                 'confirm_password_error': confirm_password_error,
                 'terms_error': terms_error,
-                'fullname_value': fullname_value,
+                'fullname_value': fullname,
                 'email_value': email_value,
                 'terms_accepted': terms_accepted,
             }
@@ -208,10 +232,8 @@ def signup(request):
         first_name = name_parts[0]
         last_name = " ".join(name_parts[1:])
 
-        username = email
-
         user = User.objects.create_user(
-            username=username,
+            username=fullname,
             email=email,
             password=password,
             first_name=first_name,
@@ -220,7 +242,11 @@ def signup(request):
 
         UserProfile.objects.create(user=user)
 
-        messages.success(request, "Account created successfully! Please log in.")
+        messages.success(
+            request,
+            "Account created successfully! Please log in."
+        )
+
         return redirect("login")
 
     context = {
@@ -709,6 +735,14 @@ def contact(request):
                 email_error = "Please enter a valid email address."
 
             else:
+                email_context = {
+                    'email_type': 'contact',
+                    'email_title': 'New Contact Message',
+                    'message': 'You have received a new message from your website.',
+                    'sender_name': name,
+                    'sender_email': email,
+                    'contact_message': message,
+                }
 
                 email_message = f"""
 New Contact Message from MyBlog
@@ -716,17 +750,18 @@ New Contact Message from MyBlog
 Name: {name}
 Email: {email}
 
+Subject: {subject}
+
 Message:
 {message}
 """
 
                 try:
-                    send_mail(
-                        subject=subject,
-                        message=email_message,
-                        from_email=None,
-                        recipient_list=['test@example.com'],
-                        fail_silently=False,
+                    send_html_email(
+                              subject=subject,
+                              recipient_list=['test@example.com'],
+                              context=email_context,
+                              text_message=email_message
                     )
 
                     contact_message = "Your message has been sent successfully!"

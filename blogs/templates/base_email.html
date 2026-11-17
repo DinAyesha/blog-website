@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="margin:0; padding:30px 10px; background:#f4f4f7; font-family:Arial,sans-serif;">
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td align="center">
+
+                <table width="100%" cellpadding="0" cellspacing="0"
+                       style="max-width:550px; background:#ffffff; border-radius:10px; overflow:hidden;">
+
+                    <!-- Header -->
+                    <tr>
+                        <td align="center" style="background:#263238; padding:25px;">
+                            <h1 style="color:#ffffff; margin:0;">MyBlog</h1>
+                        </td>
+                    </tr>
+
+                    <!-- Dynamic Email Content -->
+                    <tr>
+                        <td style="padding:35px; color:#333333; line-height:1.7;">
+
+                            <h2>{{ email_title }}</h2>
+
+                            <p>{{ message }}</p>
+
+                            {% if email_type == "password_reset" %}
+
+                                <p>Click below to create a new password:</p>
+
+                                <p style="text-align:center; margin:30px 0;">
+                                    <a href="{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}"
+                                       style="display:inline-block; background:#263238; color:#ffffff; padding:14px 30px; text-decoration:none; border-radius:6px;">
+                                        Reset My Password
+                                    </a>
+                                </p>
+
+                                <p>If you did not request a password reset, you can safely ignore this email.</p>
+
+                            {% elif email_type == "contact" %}
+
+                                <hr>
+
+                                <p><strong>Name:</strong> {{ sender_name }}</p>
+                                <p><strong>Email:</strong> {{ sender_email }}</p>
+                                <p><strong>Message:</strong></p>
+                                <p>{{ contact_message|linebreaksbr }}</p>
+
+                            {% elif button_url %}
+
+                                <p style="text-align:center; margin:30px 0;">
+                                    <a href="{{ button_url }}"
+                                       style="display:inline-block; background:#263238; color:#ffffff; padding:14px 30px; text-decoration:none; border-radius:6px;">
+                                        {{ button_text }}
+                                    </a>
+                                </p>
+
+                            {% endif %}
+
+                            <p style="margin-top:30px;">
+                                Thank you,<br>
+                                <strong>MyBlog Team</strong>
+                            </p>
+
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="background:#f4f4f7; padding:20px;">
+                            <p style="font-size:12px; color:#888888; margin:0;">
+                                © MyBlog. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>
