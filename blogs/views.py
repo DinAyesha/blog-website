@@ -418,7 +418,8 @@ def blog(request):
           id=category_id
        ).first()
 
-       posts = posts.filter(category_id=category_id)
+       if selected_category:
+           posts = posts.filter(category_id=category_id)
 
     if search_query:
        posts = posts.filter(
@@ -430,7 +431,7 @@ def blog(request):
           Q(author__last_name__icontains=search_query)
     )
 
-    categories = Category.objects.all()
+    categories = Category.objects.all().order_by('name')
     context = {
        'posts': posts,
        'categories': categories,
@@ -682,13 +683,27 @@ def delete_blog(request, post_id):
 @login_required
 def my_blog(request):
 
+    if request.user.is_superuser:
+        return redirect('blogs')
+
     posts = BlogPost.objects.filter(
         author=request.user
     ).select_related(
         'author', 'category'
     ).order_by('-created_at')
 
+    category_id = request.GET.get('category')
     search_query = request.GET.get('search', '').strip()
+
+    selected_category = None
+
+    if category_id and category_id.isdigit():
+        selected_category = Category.objects.filter(
+            id=category_id
+        ).first()
+
+        if selected_category:
+            posts = posts.filter(category=selected_category)
 
     if search_query:
         posts = posts.filter(
@@ -697,8 +712,12 @@ def my_blog(request):
             Q(category__name__icontains=search_query)
         )
 
+    categories = Category.objects.all().order_by('name')
+
     context = {
         'posts': posts,
+        'categories': categories,
+        'selected_category': selected_category,
         'search_query': search_query
     }
 

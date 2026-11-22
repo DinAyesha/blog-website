@@ -28,7 +28,7 @@
                 <li>
                     <a href="{% url 'contact' %}">Contact</a>
                 </li>
-                {% if not user.is_superuser %}
+                {% if user.is_authenticated and not user.is_superuser %}
                 <li>
                    <a href="{% url 'my_blog' %}" class="active">My Blog</a>
                 </li>
@@ -37,8 +37,9 @@
         </nav>
 
         <div class="buttons">
-            <div class="profile-section">
 
+            {% if user.is_authenticated %}
+            <div class="profile-section">
                 <a href="{% url 'edit_profile' %}" class="profile-link">
                     <div class="profile-icon">
                         {% if user.profile.profile_picture and user.profile.profile_picture.name != 'profile_pictures/default.png' %}
@@ -59,6 +60,10 @@
                 </form>
 
             </div>
+            {% else %}
+                  <a href="{% url 'login' %}" class="btn login">Login</a>
+                  <a href="{% url 'signup' %}" class="btn signup">Sign Up</a>
+            {% endif %}
         </div>
     </header>
 
@@ -75,7 +80,7 @@
 
         <!-- Search -->
         <div class="blog-top">
-            <form method="GET" action="{% url 'my_blog' %}" class="blog-search">
+            <form method="GET" action="{% url 'blog' %}" class="blog-search">
 
                 <input
                     type="text"
@@ -89,6 +94,25 @@
             </form>
         </div>
 
+
+        <!-- Category Filter Buttons -->
+        <div class="category-filters">
+
+            <a href="?search={{ search_query|urlencode }}"
+               class="category-btn {% if not selected_category %}active{% endif %}">
+               All Posts
+            </a>
+
+            {% for category in categories %}
+
+               <a href="?category={{ category.id }}&search={{ search_query|urlencode }}"
+               class="category-btn {% if selected_category.id == category.id %}active{% endif %}">
+               {{ category.name }}
+               </a>
+
+            {% endfor %}
+
+        </div>
 
         <!-- My Posts Heading -->
         <div class="blog-top">

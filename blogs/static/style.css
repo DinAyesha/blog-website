@@ -781,6 +781,45 @@ footer p {
     border-color: #4f70f5;
 }
 
+
+/* =================================
+   Category Filter Buttons
+================================= */
+
+.category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    margin: 20px 0 35px;
+}
+
+.category-btn {
+    display: inline-block;
+    padding: 10px 22px;
+
+    border: 1px solid #172640;
+    border-radius: 30px;
+
+    background-color: #ffffff;
+    color: #172640;
+
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+
+    transition: all 0.3s ease;
+}
+
+.category-btn:hover,
+.category-btn.active {
+    background-color: #172640;
+    color: #ffffff;
+}
+
+
 .blog-subtitle {
     font-size: 13px;
     color: #647084;
