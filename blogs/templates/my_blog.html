@@ -29,9 +29,11 @@
                 <li>
                     <a href="{% url 'contact' %}">Contact</a>
                 </li>
+                {% if user.is_authenticated and not user.is_superuser %}
                 <li>
                     <a href="{% url 'my_blog' %}" class="active">My Blog</a>
                 </li>
+                {% endif %}
             </ul>
         </nav>
 
@@ -65,6 +67,13 @@
 
             </div>
 
+            {% else %}
+
+               <a href="{% url 'login' %}" class="btn">Login</a>
+               <a href="{% url 'signup' %}" class="btn">Sign Up</a>
+
+           {% endif %}
+
         </div>
 
     </header>
@@ -97,6 +106,10 @@
 
                 <button type="submit">Search</button>
 
+                {% if selected_category %}
+                   <input type="hidden" name="category" value="{{ selected_category.id }}">
+                {% endif %}
+
             </form>
 
             {% if user.is_authenticated and not user.is_staff %}
@@ -117,6 +130,25 @@
 
         </div>
 
+
+        <!-- Category Filter Buttons -->
+        <div class="category-filters">
+
+            <a href="?search={{ search_query|urlencode }}"
+                class="category-btn {% if not selected_category %}active{% endif %}">
+                All Posts
+            </a>
+
+        {% for category in categories %}
+
+            <a href="?category={{ category.id }}&search={{ search_query|urlencode }}"
+                class="category-btn {% if selected_category.id == category.id %}active{% endif %}">
+                {{ category.name }}
+            </a>
+
+        {% endfor %}
+
+        </div>
 
         <!-- My Blog Posts -->
         <section class="latest-blogs" id="my-posts">
