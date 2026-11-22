@@ -146,6 +146,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
+
 DEFAULT_FROM_EMAIL = 'MyBlog <no-reply@myblog.com>'
 
 MEDIA_URL = '/media/'
