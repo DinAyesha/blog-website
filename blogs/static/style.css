@@ -1426,3 +1426,43 @@ footer p {
 .contact-message.error {
     color: #dc3545;
 }
+
+/*Error Pages*/
+
+.error-container {
+    min-height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+}
+
+.error-box {
+    max-width: 500px;
+}
+
+.error-box h1 {
+    font-size: 100px;
+    color: #17243e;
+    margin: 0;
+}
+
+.error-box h2 {
+    font-size: 30px;
+    margin: 10px 0;
+}
+
+.error-box p {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.error-box a {
+    display: inline-block;
+    text-decoration: none;
+    background-color: #17243e;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 5px;
+}
